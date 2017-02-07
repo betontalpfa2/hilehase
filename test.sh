@@ -1,8 +1,11 @@
 #!/bin/bash
 
-source ./setup.sh
-
 ./make.sh
+if [ $? != 0 ]
+    then
+    exit 1
+fi
+
 
 echo "Running test ..."
 cd rundir 

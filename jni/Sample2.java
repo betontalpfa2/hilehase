@@ -1,7 +1,7 @@
 public class Sample2
  {
-   public static int intMethod(int n) {
-       return n*n;
+   public static int echo(int n) {
+       return n;
    }
 
    public static boolean booleanMethod(boolean bool) {

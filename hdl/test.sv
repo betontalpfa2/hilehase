@@ -1,9 +1,17 @@
 module Bus(input In1, output Out1);
     int a;
-  import "DPI-C" function int java(input int asrgc,
-                                         input string argv);
-  import "DPI-C" function int slave_write(input int address,
-                                         input int data);
+    
+
+  import "DPI-C" function int  hilihase_init ( int argc, string argv ) ;
+  
+  import "DPI-C" function int  hilihase_close ( ) ;
+  import "DPI-C" function int  hilihase_echo1 ( int a);
+  import "DPI-C" function int  hilihase_echo2 ( int a);
+  
+  // import "DPI-C" function int java(input int asrgc,
+                                         // input string argv);
+  // import "DPI-C" function int slave_write(input int address,
+                                         // input int data);
   // export "DPI-C" function write;  // Note – not a function prototype
 
   // This SystemVerilog function could be called from C
@@ -15,12 +23,17 @@ module Bus(input In1, output Out1);
   
   initial begin
   
-  a = slave_write(1, 2); // Arguments passed by copy
+  a = hilihase_echo1(42); // Arguments passed by copy
     $display(a);
   // ...
   
   #5
-  a = java(2, "/home/ebenera/hilihase/jni"); // Arguments passed by copy
+ a= hilihase_init(2, "/home/ebenera/hilihase/jni");
+    $display(a);
+  a = hilihase_echo2 ( 84 );
+    $display(a);
+  a =hilihase_close ( ) ;
+  // a = java(2, "/home/ebenera/hilihase/jni"); // Arguments passed by copy
     $display(a);
   
   #5

@@ -12,6 +12,7 @@
 #define CLASS_NOT_FOUND -3
 #define METHOD_NOT_FOUND -4
 #define JVM_CREATE_ERROR -5
+#define HILIHASE_THREAD_ERROR -6
 // #define JVM_NOT_RUNNING -1
 
 
@@ -89,17 +90,33 @@ int  hilihase_init ( int argc, char* argv ){
     vm_args.version = JNI_VERSION_1_2;
     vm_args.nOptions = 1;
     vm_args.options = options;
+    
+    printf("Info: Creating JVM... (JVM options: %s)\n", path);
+    
+    /**
+     *  This is a shared library.
+     *  Current implemetation does not supports multi-user/multi-simulation.
+     *  Following line is not thread-safe, but it is enough during the developing.
+     *  Proposal is to start JVM for each simulator, whose identify themselfes
+     *  with an id. 
+     */
+    if(NULL != jvm){
+        printf("ERROR: JVM is already running. Do not call hilihase_init twice, but maybe another user uses HILIHASE, which is not supported.");
+        return HILIHASE_THREAD_ERROR;
+    }
     status = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
     if (status == JNI_ERR) {
       hilihase_close();
       printf("Error: JNI_CreateJavaVM status:  %d\n", status);
       return JVM_CREATE_ERROR;
     }
-    cls = (*env)->FindClass(env, "Sample2");
+    printf("Info: Finding class... \n");
+    cls = (*env)->FindClass(env, "hu/beton/hilihase/jfw/Sample2");
     if(0 == cls) {
-        printf("Error: Sample2 class not found\n");
+        printf("Error: Sample2 class not found. (JVM options: %s)\n", path);
         return CLASS_NOT_FOUND;
     }
+    printf("Info: Getting methods... \n");
     jvm_echo = (*env)->GetStaticMethodID(env, cls, "echo", "(I)I");
     if(0 == jvm_echo){
         printf("Error: echo method not found\n");
@@ -115,17 +132,19 @@ int  hilihase_init ( int argc, char* argv ){
         printf("Error: hilihase_read method not found\n");
         return METHOD_NOT_FOUND;
     }
-    jvm_hilihase_register = (*env)->GetStaticMethodID(env, cls, "hilihase_register", "(I[CB)I");
-    if(0 == jvm_hilihase_register){
-        printf("Error: hilihase_register method not found\n");
-        return METHOD_NOT_FOUND;
-    }
     jvm_hilihase_drive = (*env)->GetStaticMethodID(env, cls, "hilihase_drive", "(I)B");
     if(0 == jvm_hilihase_drive){
         printf("Error: hilihase_drive method not found\n");
         return METHOD_NOT_FOUND;
     }
+    jvm_hilihase_register = (*env)->GetStaticMethodID(env, cls, "hilihase_register", "(ILjava/lang/String;B)I");
+    if(0 == jvm_hilihase_register){
+        printf("Error: hilihase_register method not found\n");
+        return METHOD_NOT_FOUND;
+    }
     
+   
+    printf("Info: Initialization finished \n");
     return 0;
 }
 
@@ -190,7 +209,11 @@ int  hilihase_register (int id, char* name, byte init_val){
     if ( ret<0 ){
         return ret;
     }
-    return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_register, id, name, init_val);
+    // char *buf = (char*)malloc(10);
+    // strcpy(buf, "123456789"); // with the null terminator the string adds up to 10 bytes
+    jstring jstrBuf = (*env)->NewStringUTF(env, name);
+    // jstring NewStringUTF(JNIEnv *env, const char *name);
+    return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_register, id, jstrBuf, init_val);
     
 }
 
@@ -221,4 +244,8 @@ byte  hilihase_drive (int id){
    
 }
 
+
+byte  hilihase_version (){
+
+}
 

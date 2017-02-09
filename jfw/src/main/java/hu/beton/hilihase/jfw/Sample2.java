@@ -1,5 +1,12 @@
-public class Sample2
+package hu.beton.hilihase.jfw;
+
+public class Sample2 implements IBase
  {
+	public static void hilihase_log(String msg) {
+
+    	System.out.println("HILIHASE: " + msg);
+	}
+	
     public static int echo(int n) {
        return n;
     }
@@ -14,7 +21,6 @@ public class Sample2
         return 0;
         }
         
-        // if (a < 2)
         System.out.println("Signal is undefined!");
         return 1;
     }
@@ -23,11 +29,15 @@ public class Sample2
         return -1;
     }
         
-    public static int hilihase_register(int id, char[] name, byte initval){
-        return -1;
+    public static int hilihase_register(int id, String name, byte initval){
+    	Sample2.hilihase_log("Signal registered. Id: " + id + " Name: " + name + " init val: " + initval);
+    	Base.getBase().register_signal(id, name, new Value(initval));
+        return 0;
     }
     
-    public static int hilihase_read(int id, byte val){
+
+	public static int hilihase_read(int id, byte val){
+    	Base.getBase().read_signal(id, new Value(val));
         return -1;
     }
     

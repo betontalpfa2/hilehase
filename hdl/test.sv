@@ -41,7 +41,7 @@ module Bus();
      *  hilihase_init:
      *  initialise the Java framework
      *  argc must be 2
-     *  argv is the path to the java class. (/home/ebenera/hilihase/jni)
+     *  argv is the path to the java class. (/home/ebenera/hilihase/jfw/target/classes)
      */
     import "DPI-C" function int  hilihase_init ( int argc, string argv );
     
@@ -121,9 +121,9 @@ module Bus();
     /**************************************************************************/
     
     initial begin
-        a= hilihase_init(2, "/home/ebenera/hilihase/jni");
+        a= hilihase_init(2, "/home/ebenera/hilihase/jfw/target/classes");
         assert(a==0);
-        if (a<0)$stop(a);
+        if (a<0)$finish(a);
         
         a= hilihase_register(1, "top_x", top_x);
         assert(a==0);

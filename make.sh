@@ -18,8 +18,9 @@ fi
 cd ..
 
 echo "Compiling Sample2.java..."
-cd jni 
-javac Sample2.java
+cd jfw
+mvn compile
+# javac ./main/Sample2.java
 if [ $? != 0 ]
     then
     exit 1

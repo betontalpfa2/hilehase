@@ -8,16 +8,8 @@ if [  -z ${__SETUP_RUNNED__+x} ]
   exit 1
 fi
 
-echo "Building connector.so ..."
-cd clibs
-gcc -fPIC connector.c -shared -o connector.so -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -ljvm -L$JAVA_HOME/jre/lib/amd64/server
-if [ $? != 0 ]
-    then
-    exit 1
-fi
-cd ..
 
-echo "Compiling Sample2.java..."
+echo "Compiling Java and C with maven..."
 cd jfw
 mvn compile
 # javac ./main/Sample2.java

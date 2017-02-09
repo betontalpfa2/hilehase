@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>hu.beton.hilihase.jfw</groupId>
   <artifactId>jfw</artifactId>
-  <packaging>jar</packaging>
+  <packaging>nar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>jfw</name>
   <url>http://maven.apache.org</url>
@@ -15,4 +15,37 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-</project>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.maven-nar</groupId>
+        <artifactId>nar-maven-plugin</artifactId>
+        <version>3.2.3</version>
+        <extensions>true</extensions>
+        <configuration>
+          <libraries>
+            <library>
+            </library>
+          </libraries>
+          <linker>
+            <libs>
+              <lib>
+                <name>jvm</name>
+                <directory>${env.JAVA_HOME}/jre/lib/amd64/server</directory>
+              </lib>
+            </libs>  
+          </linker> 
+          <c>
+          <includePaths>
+            <includePath>
+              <path>${env.JAVA_HOME}/include</path>
+              <path>${env.JAVA_HOME}/include/linux</path>
+            </includePath>
+          </includePaths>
+          </c>
+
+         </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  </project>

@@ -67,6 +67,16 @@ int check_callability(jmethodID mid){
 }
 
 /**
+ * hilihase_close
+ * Closes the Java framework at the end of the simulation.
+ */
+int  hilihase_close ( ){
+    (*jvm)->DestroyJavaVM(jvm);
+    jvm = NULL;
+    return 0;
+}
+
+/**
  *  hilihase_init:
  *  initialise the Java framework
  *  argc must be 2
@@ -107,7 +117,7 @@ int  hilihase_init ( int argc, char* argv ){
     status = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
     if (status == JNI_ERR) {
       hilihase_close();
-      printf("Error: JNI_CreateJavaVM status:  %d\n", status);
+      printf("Error: JNI_CreateJavaVM status:  %ld\n", status);
       return JVM_CREATE_ERROR;
     }
     printf("Info: Finding class... \n");
@@ -168,15 +178,6 @@ int  hilihase_step ( int curr_time ){
     // return -1;
 }
 
-/**
- * hilihase_close
- * Closes the Java framework at the end of the simulation.
- */
-int  hilihase_close ( ){
-    (*jvm)->DestroyJavaVM(jvm);
-    jvm = NULL;
-    return 0;
-}
 
 /**
  * hilihase_echo1:
@@ -238,14 +239,14 @@ int  hilihase_read (int id, byte a){
 byte  hilihase_drive (int id){
     int ret = check_callability(jvm_hilihase_drive);
     if ( ret<0 ){
-        return ret;
+        return (byte)ret;
     }
-    return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_drive, id);
+    return (byte)(*env)->CallStaticIntMethod(env, cls, jvm_hilihase_drive, id);
    
 }
 
 
 byte  hilihase_version (){
-
+    return 0;
 }
 

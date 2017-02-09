@@ -31,13 +31,13 @@ public class Sample2 implements IBase
         
     public static int hilihase_register(int id, String name, byte initval){
     	Sample2.hilihase_log("Signal registered. Id: " + id + " Name: " + name + " init val: " + initval);
-    	Base.getBase().register_signal(id, name, new Value(initval));
+    	Base.getBase().register_signal(id, name, ValueE.ValueOf(initval));
         return 0;
     }
     
 
 	public static int hilihase_read(int id, byte val){
-    	Base.getBase().read_signal(id, new Value(val));
+    	Base.getBase().read_signal(id, ValueE.ValueOf(val));
         return -1;
     }
     

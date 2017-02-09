@@ -1,11 +1,17 @@
 package hu.beton.hilihase.jfw;
 
+
 public class Value {
-	int val;
+	
+	ValueE val;
 	
 	public Value(int val) {
-		this.val = val;
+		this.val = ValueE.ValueOf(val);
 	}
+
 	
-	
+
+//	bool isUnknown(){
+//		if
+//	}
 }

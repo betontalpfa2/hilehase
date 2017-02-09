@@ -46,6 +46,44 @@
 
          </configuration>
       </plugin>
+      <plugin>
+        <artifactId>exec-maven-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <executions>
+          <execution><!-- Run our version calculation script -->
+            <id>Compile</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>/home/ebenera/tmp/testme.sh</executable>
+            </configuration>
+          </execution>
+          <execution><!-- Run our version calculation script -->
+            <id>TEST1</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/../sourceme.sh</executable>
+            </configuration>
+          </execution>
+        <execution><!-- Run our version calculation script -->
+          <id>TEST2</id>
+          <phase>test</phase>
+          <goals>
+            <goal>exec</goal>
+          </goals>
+          <configuration>
+            <executable>${basedir}/scripts/make.sh</executable>
+          </configuration>
+        </execution>
+      </executions>
+          
+      </plugin>
+      
     </plugins>
   </build>
   </project>

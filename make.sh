@@ -28,5 +28,10 @@ cd ..
 
 echo "Compiling test.sv ..."
 cd rundir 
+vlog ../hdl/full_adder.v
 vlog ../hdl/test.sv
+if [ $? != 0 ]
+    then
+    exit 1
+fi
 cd ..

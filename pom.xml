@@ -61,29 +61,17 @@
             </configuration>
           </execution>
           <execution><!-- Run our version calculation script -->
-            <id>TEST1</id>
-            <phase>generate-sources</phase>
+            <id>TEST2</id>
+            <phase>test</phase>
             <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>${basedir}/../sourceme.sh</executable>
+              <executable>${basedir}/scripts/make.sh</executable>
             </configuration>
           </execution>
-        <execution><!-- Run our version calculation script -->
-          <id>TEST2</id>
-          <phase>test</phase>
-          <goals>
-            <goal>exec</goal>
-          </goals>
-          <configuration>
-            <executable>${basedir}/scripts/make.sh</executable>
-          </configuration>
-        </execution>
-      </executions>
-          
+      </executions>   
       </plugin>
-      
     </plugins>
   </build>
-  </project>
+</project>

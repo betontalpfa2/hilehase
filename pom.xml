@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>hu.beton.hilihase.jfw</groupId>
   <artifactId>jfw</artifactId>
-  <packaging>nar</packaging>
+  <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>jfw</name>
   <url>http://maven.apache.org</url>
@@ -22,6 +22,14 @@
         <artifactId>nar-maven-plugin</artifactId>
         <version>3.2.3</version>
         <extensions>true</extensions>
+        <executions>
+            <execution>
+              <phase>compile</phase>
+              <goals>
+                  <goal>nar-compile</goal>
+              </goals>
+            </execution>
+        </executions>
         <configuration>
           <libraries>
             <library>
@@ -38,31 +46,45 @@
           <c>
           <includePaths>
             <includePath>
+              <path>${env.QUESTA_HOME}/questasim/include</path>
               <path>${env.JAVA_HOME}/include</path>
               <path>${env.JAVA_HOME}/include/linux</path>
             </includePath>
           </includePaths>
           </c>
-
-         </configuration>
+          <javah>
+            <jniDirectory>${basedir}/src/main/c</jniDirectory>
+            </javah>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>exec-maven-plugin</artifactId>
+        <version>1.5.0</version>
         <groupId>org.codehaus.mojo</groupId>
         <executions>
           <execution><!-- Run our version calculation script -->
-            <id>Compile</id>
+            <id>generate-dpi-header</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>/home/ebenera/tmp/testme.sh</executable>
+              <executable>${basedir}/scripts/generateDPI.sh</executable>
             </configuration>
           </execution>
           <execution><!-- Run our version calculation script -->
-            <id>TEST2</id>
+            <id>TEST</id>
             <phase>test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/scripts/test.sh</executable>
+            </configuration>
+          </execution>
+          <execution><!-- Run our version calculation script -->
+            <id>TEST-COMPILE</id>
+            <phase>test-compile</phase>
             <goals>
               <goal>exec</goal>
             </goals>

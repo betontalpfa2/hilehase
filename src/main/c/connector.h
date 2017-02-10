@@ -1,0 +1,7 @@
+
+#define JVM_NOT_RUNNING -1
+#define JAVA_ENV_ERROR  -2
+#define CLASS_NOT_FOUND -3
+#define METHOD_NOT_FOUND -4
+#define JVM_CREATE_ERROR -5
+#define HILIHASE_THREAD_ERROR -6

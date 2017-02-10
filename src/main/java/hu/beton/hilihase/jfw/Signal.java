@@ -1,20 +1,35 @@
 package hu.beton.hilihase.jfw;
 
 public class Signal {
-	ValueE previous;
-	ValueE val = ValueE.UNDEFINED;
-	String name;
-	int id;
+	private ValueE previous;
+	private ValueE val = ValueE.UNDEFINED;
+	private int lastChange;
+	private String name;
+	private int id;
 	
 	public Signal(int id, String name, ValueE val) {
 		this.id = id;
 		this.name = name;
 		set(val);
 	}
+	
+
+	public synchronized void drive(ValueE value) {
+//		Base.getBase().getConnector().hilihase_drve(id, (byte) value.getVal());
+		Sample2.hilihase_drve(id, (byte) value.getVal());
+		
+//		set(value);
+	}
+
+
 
 	public synchronized void set(ValueE value) {
+		if(previous == val){
+			return;
+		}
 		previous = val;
 		val = value;
+		lastChange = Base.getBase().getTime();
 		notifyAll();
 	}
 	
@@ -48,5 +63,23 @@ public class Signal {
 		default:
 			return false;
 		}
+	}
+	
+	public synchronized byte drive(){
+		try {
+			while(true){
+				if(lastChange == Base.getBase().getTime())
+					return (byte) val.getVal();
+				wait();
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return (byte) 255;
+		}
+	}
+
+	public String getName() {
+		return name;
 	}
 }

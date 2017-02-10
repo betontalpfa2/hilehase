@@ -1,33 +1,48 @@
 
 #include <jni.h>
 #include <string.h>
+#include "hu_beton_hilihase_jfw_Sample2.h"
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
 #else
 #define PATH_SEPARATOR ':'
 #endif
-
-#define JVM_NOT_RUNNING -1
-#define JAVA_ENV_ERROR  -2
-#define CLASS_NOT_FOUND -3
-#define METHOD_NOT_FOUND -4
-#define JVM_CREATE_ERROR -5
-#define HILIHASE_THREAD_ERROR -6
+#include "svdpi.h"
+#include "dpiheader.h"
+#include "connector.h"
 // #define JVM_NOT_RUNNING -1
 
 
 JNIEnv *env = NULL;
 JavaVM *jvm = NULL;
 jclass cls = NULL;
+int error_code = 0;
 
 
-
+static svScope  calling_scope;
 jmethodID jvm_hilihase_step = NULL;
 jmethodID jvm_echo = NULL;
 jmethodID jvm_hilihase_register = NULL;
 jmethodID jvm_hilihase_read = NULL;
 jmethodID jvm_hilihase_drive = NULL;
+jmethodID jvm_hilihase_init = NULL;
+jmethodID jvm_hilihase_start_tc = NULL;
+jmethodID jvm_hilihase_close = NULL;
 
+
+#define nOOptions 2
+
+
+extern void hilihase_drive2(int id, char data);    // Imported from SystemVerilog
+
+
+JNIEXPORT jint JNICALL Java_hu_beton_hilihase_jfw_Sample2_hilihase_1drve
+  (JNIEnv * env, jobject obj, jint id, jbyte val){
+    printf("@@@@@@@@@@@@@@@HERE I AM!!!!!!@@@@@@@@@@@@@");
+    svSetScope(calling_scope);
+    hilihase_drive2(id, val);
+    return 0;
+}
 
 /**
  * TypeSign -- Java Type --	Native Type --	Description
@@ -71,8 +86,27 @@ int check_callability(jmethodID mid){
  * Closes the Java framework at the end of the simulation.
  */
 int  hilihase_close ( ){
-    (*jvm)->DestroyJavaVM(jvm);
+    if(jvm){
+        printf("Destroying BASE from C...");
+        fflush(stdout);
+        error_code =  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_close, 0);    
+        printf("Destroying JAVA...");
+        fflush(stdout);
+        (*jvm)->DestroyJavaVM(jvm);
+        printf("    [  OK  ]\n");
+        fflush(stdout);
+    }
     jvm = NULL;
+    return 0;
+}
+
+int __function_getter__(jmethodID* mid, const char* name, const char* decoration){
+    *mid = (*env)->GetStaticMethodID(env, cls, name, decoration);
+    if(0 == *mid){
+        printf("Error: %s method not found\n", name);
+        error_code = METHOD_NOT_FOUND;
+        return error_code;
+    }
     return 0;
 }
 
@@ -82,11 +116,12 @@ int  hilihase_close ( ){
  *  argc must be 2
  *  argv is the path to the java class. (/home/ebenera/hilihase/jni)
  */
-int  hilihase_init ( int argc, char* argv ){
-    JavaVMOption options[1];
+int  hilihase_init ( int argc, const char* argv ){
+    JavaVMOption options[nOOptions];
     JavaVMInitArgs vm_args;
     long status;
 
+    calling_scope = svGetScope();
     char path[100];
     strcpy(path, "-Djava.class.path=");
     if(argc>1){
@@ -94,11 +129,13 @@ int  hilihase_init ( int argc, char* argv ){
     } else {
         strcat(path, ".");
     }
-    options[0].optionString = path;
+    
+    options[0].optionString = "-Djava.library.path=/home/ebenera/hilihase/target/nar/jfw-1.0-SNAPSHOT-amd64-Linux-gpp-shared/lib/amd64-Linux-gpp/shared";
+    options[1].optionString = path;
     // strcat(options[0].optionString, path); // "-Djava.class.path=.";
     memset(&vm_args, 0, sizeof(vm_args));
     vm_args.version = JNI_VERSION_1_2;
-    vm_args.nOptions = 1;
+    vm_args.nOptions = nOOptions;
     vm_args.options = options;
     
     printf("Info: Creating JVM... (JVM options: %s)\n", path);
@@ -112,49 +149,45 @@ int  hilihase_init ( int argc, char* argv ){
      */
     if(NULL != jvm){
         printf("ERROR: JVM is already running. Do not call hilihase_init twice, but maybe another user uses HILIHASE, which is not supported.");
+        fflush(stdout);
         return HILIHASE_THREAD_ERROR;
     }
     status = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
     if (status == JNI_ERR) {
       hilihase_close();
       printf("Error: JNI_CreateJavaVM status:  %ld\n", status);
+        fflush(stdout);
       return JVM_CREATE_ERROR;
     }
     printf("Info: Finding class... \n");
     cls = (*env)->FindClass(env, "hu/beton/hilihase/jfw/Sample2");
     if(0 == cls) {
         printf("Error: Sample2 class not found. (JVM options: %s)\n", path);
+        fflush(stdout);
         return CLASS_NOT_FOUND;
     }
-    printf("Info: Getting methods... \n");
-    jvm_echo = (*env)->GetStaticMethodID(env, cls, "echo", "(I)I");
-    if(0 == jvm_echo){
-        printf("Error: echo method not found\n");
-        return METHOD_NOT_FOUND;
-    }
-    jvm_hilihase_step = (*env)->GetStaticMethodID(env, cls, "hilihase_step", "(I)I");
-    if(0 == jvm_hilihase_step){
-        printf("Error: hilihase_step method not found\n");
-        return METHOD_NOT_FOUND;
-    }
-    jvm_hilihase_read = (*env)->GetStaticMethodID(env, cls, "hilihase_read", "(IB)I");
-    if(0 == jvm_hilihase_read){
-        printf("Error: hilihase_read method not found\n");
-        return METHOD_NOT_FOUND;
-    }
-    jvm_hilihase_drive = (*env)->GetStaticMethodID(env, cls, "hilihase_drive", "(I)B");
-    if(0 == jvm_hilihase_drive){
-        printf("Error: hilihase_drive method not found\n");
-        return METHOD_NOT_FOUND;
-    }
-    jvm_hilihase_register = (*env)->GetStaticMethodID(env, cls, "hilihase_register", "(ILjava/lang/String;B)I");
-    if(0 == jvm_hilihase_register){
-        printf("Error: hilihase_register method not found\n");
-        return METHOD_NOT_FOUND;
-    }
+    printf("Info: Getting methods... ");
+    __function_getter__(&jvm_echo, "echo", "(I)I");
+    __function_getter__(&jvm_hilihase_step, "hilihase_step", "(I)I");
+    __function_getter__(&jvm_hilihase_read, "hilihase_read", "(IB)I");
+    __function_getter__(&jvm_hilihase_register, "hilihase_register", "(ILjava/lang/String;B)I");
+    __function_getter__(&jvm_hilihase_init, "hilihase_init", "(I)I");
+    __function_getter__(&jvm_hilihase_start_tc, "hilihase_start_tc", "(Ljava/lang/String;)I");
+    __function_getter__(&jvm_hilihase_close, "hilihase_close", "(I)I");
     
+    if(error_code<0){
+        printf("ERROR during getting methods!!! \n");
+        fflush(stdout);
+        return error_code;
+    }
+    printf("  [  OK  ]\n");
+        
+    printf("Info: Initialize Java framework (aka. Base)... \n");
+    fflush(stdout);
+    error_code =  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_init, 0);
    
     printf("Info: Initialization finished \n");
+    fflush(stdout);
     return 0;
 }
 
@@ -205,7 +238,7 @@ int  hilihase_echo2 ( int a){
 /**
  *   You must register all signals at the beginnig of the simulation with they init value.
  */
-int  hilihase_register (int id, char* name, byte init_val){
+int  hilihase_register (int id, const char* name, byte init_val){
     int ret = check_callability(jvm_hilihase_register);
     if ( ret<0 ){
         return ret;
@@ -236,13 +269,40 @@ int  hilihase_read (int id, byte a){
  *   hilihase_drive: 
  * This queries the signal with the gives signal if it changed in the current timeslot.
  */
-byte  hilihase_drive (int id){
-    int ret = check_callability(jvm_hilihase_drive);
-    if ( ret<0 ){
-        return (byte)ret;
-    }
-    return (byte)(*env)->CallStaticIntMethod(env, cls, jvm_hilihase_drive, id);
+// void  hilihase_drive (int id, char* val){
+    // int ret = check_callability(jvm_hilihase_drive);
+    // if ( ret<0 ){
+        // return (byte)ret;
+    // }
+    // return (byte)(*env)->CallStaticIntMethod(env, cls, jvm_hilihase_drive, id);
    
+// }
+
+
+// extern void hilihase_drive2(int id, char data);    // Imported from SystemVerilog
+
+
+// JNIEXPORT jint JNICALL Java_hu_beton_hilihase_jfw_Sample2_hilihase_1drve
+  // (JNIEnv * env, jobject obj, jint id, jbyte val){
+    // printf("@@@@@@@@@@@@@@@HERE I AM!!!!!!@@@@@@@@@@@@@");
+    // hilihase_drive2(id, val);
+    // return 0;
+// }
+
+
+// void hilihase_drive3(int id, char data){
+    // hilihase_drive2(id, data);
+// }
+
+
+int hilihase_start_tc(const char*  tcName){
+    
+    int ret = check_callability(jvm_hilihase_start_tc);
+    if ( ret<0 ){
+        return ret;
+    }
+    return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_start_tc, tcName);
+    
 }
 
 

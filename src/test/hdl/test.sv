@@ -4,9 +4,9 @@ module Bus();
     int b2;
     
     
-    reg top_x;
-    reg top_y;
-    reg top_cin;
+    logic top_x;
+    logic top_y;
+    logic top_cin;
      
     logic out;
     logic carryout;
@@ -89,11 +89,31 @@ module Bus();
      */
     import "DPI-C" function int  hilihase_read (int id, byte a);
     
+    
+    import "DPI-C" function int  hilihase_start_tc(string str);
+    
     /**
      *   hilihase_drive: 
      * This queries the signal with the gives signal if it changed in the current timeslot.
      */
-    import "DPI-C" function byte  hilihase_drive (int id);
+    // import "DPI-C" task hilihase_drive (int id, byte val);
+  
+    /**
+     *   hilihase_drive: 
+     * This queries the signal with the gives signal if it changed in the current timeslot.
+     */
+    export "DPI-C" function hilihase_drive2;
+    
+    function void hilihase_drive2(int id, byte data);
+    begin
+        $display("FSDFSDFSDFSDFSDFSDFSDFSDFSFSDF$$$$$$$$$$$$$$$$$$$$$$$");
+         // case (id)
+            // 1: top_x = data;
+            // 2: top_y = data;
+            // default : $display("[%t ] ERROR in hilihase_drive2", $realtime ()); 
+         // endcase
+    end
+    endfunction
   
   
     task automatic hilihase_read_wrap(int id,  ref  logic signal_to_listen );
@@ -121,42 +141,73 @@ module Bus();
     /**************************************************************************/
     
     initial begin
+        $monitor("monitor a:%h b:%h @ %0t", out, carryout, $time);
+        $monitor("monitor a:%h b:%h @ %0t", top_x, top_y, $time);
+        top_x = 0;
+        top_y = 0;
+        top_cin = 0;
+    
+        $display("BABABABA LILALALALALAL");
         a= hilihase_init(2, "/home/ebenera/hilihase/target/classes");
         assert(a==0);
+        $display(a);
         if (a<0)$finish(a);
         
         a= hilihase_register(1, "top_x", top_x);
-        assert(a==0);
+        assert(a==0)else begin  $error("hilihase_register: top_x");$finish(a); end
         a= hilihase_register(2, "top_y", top_y);
-        assert(a==0);
+        assert(a==0)else begin  $error("hilihase_register: top_y"); $finish(a);end
         a= hilihase_register(3, "top_cin", top_cin);
-        assert(a==0);
+        assert(a==0)else begin $error("hilihase_register: top_cin");$finish(a);  end
         a= hilihase_register(4, "out", out);
-        assert(a==0);
+        assert(a==0)else begin  $error("hilihase_register: out");$finish(a); end
         a= hilihase_register(5, "carryout", carryout);
-        assert(a==0);
-        
+        assert(a==0)else begin  $error("hilihase_register: carryout");$finish(a); end
+        a= hilihase_start_tc("minimal");
+        assert(a==0)else begin  $error("hilihase_start_tc: minimal");$finish(a); end
+        /*
+        $display("BABABABA FTFTFTFTFT");
+        $fflush() ;
         fork
             hilihase_read_wrap(1,  top_x );
             hilihase_read_wrap(2,  top_y );
             hilihase_read_wrap(3,  top_cin );
             hilihase_read_wrap(4,  out );
             hilihase_read_wrap(5,  carryout );
+            
+            // forever begin
+                // top_x = hilihase_drive(1);
+            // end
+            
         join;
-        
+        */
+        #1
+          top_x = 1;
+        top_y = 1;
+        top_cin = 1;
+        #10
+          top_x = 0;
+        top_y = 1;
+        top_cin = 0;
+        #10
+          top_x = 1;
+        top_y = 0;
+        top_cin = 1;
+            #1000
+        a =hilihase_close ( ) ;
+        $finish(0);
     end 
     
     
     always #1 begin
         $display($realtime());
         a = hilihase_step (  $realtime() );
-        a = hilihase_step (  $realtime() );
     end
-    
-    always @(top_x) begin
-        a = hilihase_read (1,  convert(top_x ));
+    /*
+    // always @(top_x) begin
+        // a = hilihase_read (1,  convert(top_x ));
     // $display("[%t ] b2: %d", $realtime (), a); 
-    end
+    // end
     // initial
     // begin
     // input1 =0;
@@ -171,7 +222,11 @@ module Bus();
     // #20; input2=1;
     // #40;
     // end
-  
+  // top_x
+  always @(top_x) begin
+  // a = hilihase_signal (  convert(b ));
+    $display("[%t ] top_x: %d", $realtime (), top_x); 
+  end
   always @(b) begin
   // a = hilihase_signal (  convert(b ));
     $display("[%t ] b2: %d", $realtime (), a); 
@@ -193,7 +248,7 @@ module Bus();
         // $display(a);
         // $stop(a);
     
-    $display(a);
+    $display("BABABABA GAGAGAGAG");
     #1
     b = 1;
     #1
@@ -204,7 +259,7 @@ module Bus();
     b = 1'bz;
     #1
   a = hilihase_echo2 ( 84 );
-    $display(a);
+    $display(a);$fflush() ;
     #10
   a =hilihase_close ( ) ;
     $display(a);
@@ -212,5 +267,5 @@ module Bus();
   // #5
   $finish(0);
   
-  end
+    end*/
 endmodule

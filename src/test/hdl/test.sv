@@ -54,7 +54,7 @@ module Bus();
      *      1: Exit the simulator
      *      Negative: error
      */
-    import "DPI-C" function int  hilihase_step ( int curr_time );
+    import  "DPI-C" context function int  hilihase_step ( int curr_time );
 
     /**
      * hilihase_close
@@ -107,11 +107,11 @@ module Bus();
     function void hilihase_drive2(int id, byte data);
     begin
         $display("FSDFSDFSDFSDFSDFSDFSDFSDFSFSDF$$$$$$$$$$$$$$$$$$$$$$$");
-         // case (id)
-            // 1: top_x = data;
-            // 2: top_y = data;
-            // default : $display("[%t ] ERROR in hilihase_drive2", $realtime ()); 
-         // endcase
+         case (id)
+            1: top_x = data;
+            2: top_y = data;
+            default : $display("[%t ] ERROR in hilihase_drive2", $realtime ()); 
+         endcase
     end
     endfunction
   
@@ -193,7 +193,7 @@ module Bus();
           top_x = 1;
         top_y = 0;
         top_cin = 1;
-            #1000
+            #100
         a =hilihase_close ( ) ;
         $finish(0);
     end 

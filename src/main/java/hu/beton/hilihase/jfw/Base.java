@@ -64,6 +64,20 @@ public class Base {
 		notifyAll();
         System.out.println("Entering a new Timeslot: " + currentTime + "  " + this.currenTime);
 		assert(this.currenTime == currentTime);
+		
+
+		Signal sig = get("top_x");
+		if(7 == currentTime){
+			sig.drive(ValueE.LOW);
+		}
+		if(14 == currentTime){
+			sig.drive(ValueE.HIGH);
+		}
+		if(21 == currentTime){
+			sig.drive(ValueE.LOW);
+		}
+//		sig.drive(ValueE.HIGH);
+		
 		return;
 	}
 
@@ -73,7 +87,7 @@ public class Base {
 			@Override
 			public void run() {
 				try{
-					Signal sig;
+					/*Signal sig;
 					System.out.println("Signals: " + signals );
 					System.out.println("Signals size: " + signals.size() );
 //					System.out.println("[ INFO ] settin exception! at "  + getTime());
@@ -84,7 +98,7 @@ public class Base {
 					waitSim(5);
 					sig.drive(ValueE.LOW);
 					waitSim(5);
-					sig.drive(ValueE.HIGH);
+					sig.drive(ValueE.HIGH);*/
 				} catch(Exception ex){
 					System.out.println("[ CRITICAL ERROR ] unhandled exception! at "  + getTime());
 					ex.printStackTrace();

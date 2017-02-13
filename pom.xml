@@ -20,7 +20,7 @@
       <plugin>
         <groupId>com.github.maven-nar</groupId>
         <artifactId>nar-maven-plugin</artifactId>
-        <version>3.2.3</version>
+        <version>3.5.1</version>
         <extensions>true</extensions>
         <executions>
             <execution>
@@ -46,9 +46,9 @@
           <c>
           <includePaths>
             <includePath>
-              <path>${env.QUESTA_HOME}/questasim/include</path>
               <path>${env.JAVA_HOME}/include</path>
               <path>${env.JAVA_HOME}/include/linux</path>
+              <path>${env.QUESTA_HOME}/questasim/include</path>
             </includePath>
           </includePaths>
           </c>

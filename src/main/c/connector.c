@@ -32,14 +32,18 @@ jmethodID jvm_hilihase_close = NULL;
 
 #define nOOptions 2
 
+svScope g_scope;
 
 extern void hilihase_drive2(int id, char data);    // Imported from SystemVerilog
 
 
 JNIEXPORT jint JNICALL Java_hu_beton_hilihase_jfw_Sample2_hilihase_1drve
   (JNIEnv * env, jobject obj, jint id, jbyte val){
+
     printf("@@@@@@@@@@@@@@@HERE I AM!!!!!!@@@@@@@@@@@@@");
-    svSetScope(calling_scope);
+    
+   // g_scope = svGetScopeFromName("Bus");
+    // svSetScope(calling_scope);
     hilihase_drive2(id, val);
     return 0;
 }
@@ -205,6 +209,7 @@ int  hilihase_step ( int curr_time ){
     if ( ret<0 ){
         return ret;
     }
+    calling_scope = svGetScope();
     return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_step, curr_time);
     
     // printf("Error: hilihase_step method not found\n");

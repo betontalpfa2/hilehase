@@ -65,6 +65,7 @@ public class Global {
 		}
 		tcThreadsState  = new ArrayList<TCThreadStateC>();
 		signals  = new ArrayList<>();
+		signals.add(new Time(0));
 		me = this;
 		runningCount = 0;
 	}
@@ -199,7 +200,7 @@ public class Global {
 		register_time(new Time(0));
 	}
 
-	public static void startTC(String tcName) {
+	protected static void startTC(String tcName) {
 		List<Class<?>> classes = ClassFinder.find("hu.beton.hilihase.testcases");
 		for(Class<?> cl : classes){
 			System.out.println("Classname: " + cl.getName());
@@ -218,8 +219,10 @@ public class Global {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				return;
 			}
 		}
+		throw new IllegalArgumentException("No testcase found with the following name: " + tcName);
 
 	}
 

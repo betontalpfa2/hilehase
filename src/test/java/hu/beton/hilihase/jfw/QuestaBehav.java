@@ -5,13 +5,13 @@ import java.util.List;
 
 public class QuestaBehav implements Runnable {
 	List<String> signalNames = new ArrayList<String>();
-	TCThread tct;
+//	TCThread tct;
 	
 	public QuestaBehav(TCThread tct) {
 		signalNames.add("clock_sig");
 		signalNames.add("sig1");
 		signalNames.add("sig2");
-		this.tct = tct;
+//		this.tct = tct;
 	}
 	
 	

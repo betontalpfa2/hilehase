@@ -31,9 +31,10 @@ public class Sample2 implements IBase
 		return n;
 	}
 
-	@Deprecated
+//	@Deprecated
 	public static int hilihase_step(int current_time){
 		try{
+			Global.get(0).set(current_time);
 //			Base.getBase().step(current_time);
 		} catch (Exception ex){
 			handleUnhandled(ex);
@@ -53,10 +54,16 @@ public class Sample2 implements IBase
 		return 0;
 	}
 
-	public static int hilihase_init(int param){
+	/**
+	 * 
+	 * @param debugLevel : set 0 for normal operation
+	 * @return
+	 */
+	public static int hilihase_init(int debugLevel){
 		try{
 			System.out.println("Initialize JAVA (myself)");
 			Base.initBase();
+			Global.init(debugLevel<1);
 			System.out.println("[  OK  ]$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 		} catch (Exception ex){
 			handleUnhandled(ex);

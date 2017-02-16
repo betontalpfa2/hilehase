@@ -1,6 +1,8 @@
 package hu.beton.hilihase.jfw;
 
 import static org.junit.Assert.*;
+import hu.beton.hilihase.dut.FullDut;
+
 import org.junit.*;
 
 public class SignalTest {
@@ -100,23 +102,16 @@ public class SignalTest {
 	public void test_behav() throws InterruptedException {
 		try{
 			QuestaBehav qb;
-			ValueE val = ValueE.HIGH;
+//			ValueE val = ValueE.HIGH;
 
-			TCThread tct = new TCThread() {
+//			TCThread tct = new TCThread() {
 
-				@Override
-				public void test() {
-					/*Signal sig1;
-					sig1 = Global.get("clock_sig");
-					System.out.println("POS");
-					sig1.WaitOn(SignalEvent.POSEDGE, this);
-					assertEquals("simtime", 5, Global.getTime());
-					assertEquals("set-get", val, sig1.get());
-					System.out.println("TC: FIN");	*/		
-				}
-			};
+//				@Override
+//				public void test() {	
+//				}
+//			};
 
-			qb = new QuestaBehav(tct);
+			qb = new QuestaBehav(null);
 			Thread sim = new Thread(qb);
 			sim.start();
 
@@ -130,6 +125,34 @@ public class SignalTest {
 			Global.cleanup();
 		}         
 	}
+	
+	
+	@Test
+	public void test_sample2() throws InterruptedException {
+		try{
+			FullDut dut;
+//			ValueE val = ValueE.HIGH;
 
+//			TCThread tct = new TCThread() {
+
+//				@Override
+//				public void test() {	
+//				}
+//			};
+
+			dut = new FullDut();
+			Thread sim = new Thread(dut);
+			sim.start();
+
+			try {
+				sim.join();
+			} catch (InterruptedException e) {
+				assertTrue("Could not be happened", false);
+				e.printStackTrace();
+			}
+		} finally{
+			Global.cleanup();
+		}         
+	}
 
 }

@@ -126,33 +126,7 @@ public class SignalTest {
 		}         
 	}
 	
-	
-	@Test
-	public void test_sample2() throws InterruptedException {
-		try{
-			FullDut dut;
-//			ValueE val = ValueE.HIGH;
+	    
 
-//			TCThread tct = new TCThread() {
-
-//				@Override
-//				public void test() {	
-//				}
-//			};
-
-			dut = new FullDut();
-			Thread sim = new Thread(dut);
-			sim.start();
-
-			try {
-				sim.join();
-			} catch (InterruptedException e) {
-				assertTrue("Could not be happened", false);
-				e.printStackTrace();
-			}
-		} finally{
-			Global.cleanup();
-		}         
-	}
 
 }

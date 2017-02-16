@@ -12,11 +12,12 @@ public abstract  class SimVariable<ValueType, EventType> implements ISimVariable
 		this.ID = ID;
 	}
 	
-	public void set(ValueType val) {
+	void set(ValueType val) {
 		synchronized (this) {
 			_set_(val);
 		}
 		processWaitOn();
+		Global.processDriveList();
 	}
 
 	protected abstract void _set_(ValueType val);
@@ -56,6 +57,24 @@ public abstract  class SimVariable<ValueType, EventType> implements ISimVariable
 			}
 		}
 	}
+
+	protected void set(int value){
+		ValueType vt = valueOf(value);
+		set(vt);
+	}
+
+	abstract ValueType valueOf(int value);
+
+	public abstract void drive(ValueE high);
+
+	public void drive(int val) {
+		Global.addDriveList(ID, val);
+	}
+
+//	public void set(int value) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 	
 //	@Override
 //	public void set(int value) {

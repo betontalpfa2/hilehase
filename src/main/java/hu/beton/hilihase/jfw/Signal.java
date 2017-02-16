@@ -53,10 +53,10 @@ public class Signal extends SimVariable<ValueE, SignalEvent> {
 	boolean isEventActive(SignalEvent event) {
 		switch (event) {
 		case POSEDGE:
-			boolean ret = _get_(-1) == ValueE.LOW & _get_(0) != ValueE.LOW ;
+			boolean ret = _get_(-1).equals(ValueE.LOW) & !_get_(0).equals(ValueE.LOW) ;
 			return ret;
 		case NEGEDGE:
-			return _get_(-1) == ValueE.HIGH & _get_(0) != ValueE.HIGH ;
+			return _get_(-1).equals(ValueE.HIGH) & _get_(0).equals(ValueE.HIGH) ;
 		default:
 			throw new IllegalArgumentException("Event type is not supported or not implemented.");
 //			break;
@@ -69,8 +69,18 @@ public class Signal extends SimVariable<ValueE, SignalEvent> {
 	}
 
 //	@Override
-	public void set(int value) {
-		set(ValueE.ValueOf(value));
+//	protected void set(int value) {
+//		set(ValueE.ValueOf(value));
+//	}
+
+	@Override
+	public void drive(ValueE high) {
+		super.drive(high.toInteger());
+	}
+
+	@Override
+	ValueE valueOf(int value) {
+		return new ValueE(value);
 	}
 
 }

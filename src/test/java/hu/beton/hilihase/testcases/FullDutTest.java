@@ -12,13 +12,17 @@ public class FullDutTest extends TCThread {
 	@Override
 	public void test() {
 		System.out.println("TEST RUNNING!!!");
-		Signal sig1;
-		sig1 = Global.get("clk");
+		Signal clk, en;
+		clk = Global.get("clk");
+		en = Global.get("en");
 		System.out.println("POS");
-		sig1.WaitOn(SignalEvent.POSEDGE, this);
+		clk.WaitOn(SignalEvent.POSEDGE, this);
 		assertEquals("simtime", 2, Global.getTime());
-		assertEquals("set-get", ValueE.HIGH, sig1.get());
-		System.out.println("TC: FIN");		
+		assertEquals("set-get", ValueE.high, clk.get().toInteger());
+		
+		en.drive(ValueE.HIGH);
+		
+		System.out.println("TC: FIN at " + Global.getTime());		
 
 	}
 

@@ -1,6 +1,8 @@
 package hu.beton.hilihase.jfw;
 
-public class Sample2 implements IBase
+import java.util.List;
+
+public class NativeInterface implements IBase
 {
 
 //	private static java.lang.reflect.Field LIBRARIES = null;
@@ -16,6 +18,8 @@ public class Sample2 implements IBase
 //			e.printStackTrace();
 //		}
 //	}
+
+	private static List<ValueE> signals;
 
 	private static void handleUnhandled(Exception ex) {
 		System.out.println("[ CRITICAL WARNING ] Unhandled exception!!!");
@@ -34,7 +38,7 @@ public class Sample2 implements IBase
 //	@Deprecated
 	public static int hilihase_step(int current_time){
 		try{
-			Global.get(0).set(current_time);
+			Global.stepTime(current_time);
 //			Base.getBase().step(current_time);
 		} catch (Exception ex){
 			handleUnhandled(ex);
@@ -45,8 +49,8 @@ public class Sample2 implements IBase
 
 	public static int hilihase_register(int id, String name, byte initval){
 		try{
-			Sample2.hilihase_log("Signal registered. Id: " + id + " Name: " + name + " init val: " + initval);
-			Global.register_signal(id, name, ValueE.ValueOf(initval));
+			NativeInterface.hilihase_log("Signal registered. Id: " + id + " Name: " + name + " init val: " + initval);
+			Global.register_signal(id, name, new ValueE(initval));
 		} catch (Exception ex){
 			handleUnhandled(ex);
 			return -1;
@@ -71,6 +75,16 @@ public class Sample2 implements IBase
 		}
 		return 0;
 	}
+	
+	/**
+	 * 
+	 * @param debugLevel : set 0 for normal operation
+	 * @return
+	 */
+	public static int hilihase_init_debug(int debugLevel, List<ValueE> signals){
+		NativeInterface.signals = signals;
+		return hilihase_init(debugLevel);
+	}
 
 	public static int hilihase_close(int param){
 		try{
@@ -85,9 +99,9 @@ public class Sample2 implements IBase
 	}
 
 
-	public static int hilihase_read(int id, byte val){
+	public static int hilihase_read(int id, byte val, int time){
 		try{
-			Global.read_signal(id, val);
+			Global.read_signal(id, val, time);
 //			Base.getBase().read_signal(id, ValueE.ValueOf(val));
 		} catch (Exception ex){
 			handleUnhandled(ex);
@@ -102,6 +116,10 @@ public class Sample2 implements IBase
 
 	public native static int hilihase_drve(int id, byte val);
 
+	public static void hilihase_drve_debug(int iD, byte val) {
+		signals.set(iD, new ValueE((int)val));
+	}
+	
 	public static int hilihase_start_tc(String tcName){
 		try{
 			Global.startTC(tcName);
@@ -112,5 +130,7 @@ public class Sample2 implements IBase
 		}
 		return 0;
 	}
+
+
 
 }

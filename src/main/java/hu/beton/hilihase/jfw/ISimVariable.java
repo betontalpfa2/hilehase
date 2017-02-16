@@ -1,8 +1,8 @@
 package hu.beton.hilihase.jfw;
 
 public interface ISimVariable<ValueType, EventType> {
-	void set(ValueType val) ;
-	void set(int value);
+//	void set(ValueType val) ;
+//	void set(int value);
 
 //	abstract void _set_(ValueType val);
 //	abstract ValueType _get_();

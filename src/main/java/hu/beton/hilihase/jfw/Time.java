@@ -31,6 +31,16 @@ public class Time extends SimVariable<Integer, Integer> {
 		set(Integer.valueOf(value));
 	}
 
+	@Override
+	Integer valueOf(int value) {
+		return new Integer(value);
+	}
+
+	@Override
+	public void drive(ValueE high) {
+		assert(false); // Time cannot be driven...
+	}
+
 	
 
 }

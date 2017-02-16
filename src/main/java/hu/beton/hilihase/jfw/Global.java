@@ -1,6 +1,7 @@
 package hu.beton.hilihase.jfw;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Global {
@@ -9,16 +10,19 @@ public class Global {
 		Running,
 		Wait
 	}
+	
+	
 
 	private static List<TCThreadStateC> tcThreadsState; // = new ArrayList<String>();
 	//	private int[] tcThreads;
 	private boolean waitingSigTh = false;
 	private static Global me = null;
 	private static Time simTimeSignal;
-	private static List<ISimVariable<?, ?>> signals;
+	private static List<SimVariable<?, ?>> signals;
+	private static List<SignalDrv> signalDrvQueue;
 	int runningCount;
 	String testcasePath = null;
-//	static boolean  loadLibraries = true;
+	static boolean  loadLibraries = true;
 
 	class TCThreadStateC{
 		ThreadState state;
@@ -56,6 +60,7 @@ public class Global {
 
 
 	Global(boolean loadlibraries) {
+		Global.loadLibraries = loadlibraries;
 		if(loadlibraries){
 			System.out.println(System.getProperty("java.library.path"));
 			System.loadLibrary("jfw-1.0-SNAPSHOT");
@@ -68,6 +73,7 @@ public class Global {
 		signals.add(new Time(0));
 		me = this;
 		runningCount = 0;
+		signalDrvQueue = Collections.synchronizedList(new ArrayList<SignalDrv>());
 	}
 
 	static void init(){
@@ -149,13 +155,13 @@ public class Global {
 	}
 
 	public static Signal getSignal(int id) {
-		ISimVariable<?, ?> ret1 = signals.get(id);
+		SimVariable<?, ?> ret1 = signals.get(id);
 		//		Time ret = (Time) ret1;
 		return (Signal) ret1;
 	}
 
-	public static ISimVariable<?, ?> get(int id) {
-		ISimVariable<?, ?> ret = signals.get(id);
+	public static SimVariable<?, ?> get(int id) {
+		SimVariable<?, ?> ret = signals.get(id);
 		return ret;
 	}
 
@@ -187,10 +193,18 @@ public class Global {
 		simTimeSignal = time;
 	}
 
-	public static void read_signal(int id, int value) {
+	public static void read_signal(final int id, final int value, final int time) {
+		if(time != getTime()){
+			stepTime(time);
+		}
 		signals.get(id).set(value);
 	}
 
+
+	static void stepTime(final int time) {
+		assert(time == getTime()+1);
+		Global.get(0).set(time);
+	}
 
 	public static int getTime() {
 		return simTimeSignal.get();
@@ -233,6 +247,27 @@ public class Global {
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void addDriveList(int iD, int val) {
+		signalDrvQueue.add(new SignalDrv(iD, val));
+	}
+	
+	protected static void processDriveList() {
+		while(true){
+			try{
+				SignalDrv sdrv = signalDrvQueue.remove(0);
+				if(loadLibraries){
+					NativeInterface.hilihase_drve(sdrv.ID, (byte) sdrv.val);
+					}
+				else{
+					// test
+					NativeInterface.hilihase_drve_debug(sdrv.ID, (byte) sdrv.val);
+				}
+			} catch (IndexOutOfBoundsException ex){
+				return;
 			}
 		}
 	}

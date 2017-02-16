@@ -1,50 +1,70 @@
 package hu.beton.hilihase.dut;
 
+import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+
 import hu.beton.hilihase.jfw.Global;
-import hu.beton.hilihase.jfw.Sample2;
+import hu.beton.hilihase.jfw.NativeInterface;
+import hu.beton.hilihase.jfw.ValueE;
 
 public class FullDut implements Runnable{
-//	List<String> signalNames = new ArrayList<String>();
-//	TCThread tct;
+	List<String> signalNames = new ArrayList<String>();
+	int localTime = 0;
+	private List<ValueE> signals;
 	
 	public FullDut() {
-//		signalNames.add("clock_sig");
-//		signalNames.add("sig1");
-//		signalNames.add("sig2");
-//		this.tct = tct;
+		signals = new ArrayList<ValueE>();
+		signalNames.add("__simtime__");
+		signalNames.add("clk");
+		signalNames.add("en");
+		signalNames.add("reg");
 	}
 	
 	
 	@Override
 	public void run() {
-		Sample2.hilihase_init(1);
+		try{
+		NativeInterface.hilihase_init_debug(1, signals);
 		
 //		Global.init(false);
 		Global.create_time();
 //		int id = 1;
-		Sample2.hilihase_register(1, "clk", (byte) 0);
-		Sample2.hilihase_register(2, "en", (byte) 0);
-		Sample2.hilihase_register(3, "reg", (byte) 0);
+		signals.add(0, null);
+		signals.add(1, ValueE.LOW);
+		signals.add(2, ValueE.LOW);
+		signals.add(3, ValueE.LOW);
+		
+		for(int i = 1; i < signals.size(); i++ ){
+			NativeInterface.hilihase_register(i, signalNames.get(i), (byte) signals.get(i).toInteger());
+		}
+		
+//		NativeInterface.hilihase_register(2, "en", (byte) 0);
+//		NativeInterface.hilihase_register(3, "reg", (byte) 0);
 	
 		
-		Sample2.hilihase_start_tc("FullDutTest");
+		NativeInterface.hilihase_start_tc("FullDutTest");
 
-		Sample2.hilihase_step(1);
-		Sample2.hilihase_step(2);
-		Sample2.hilihase_read(1, (byte) 1);
-
-		Sample2.hilihase_step(3);
-		Sample2.hilihase_step(4);
-		Sample2.hilihase_read(1, (byte) 0);
+		NativeInterface.hilihase_step(++localTime);
+		NativeInterface.hilihase_step(++localTime);
+		NativeInterface.hilihase_read(1, (byte) 1, localTime);
 		
-		Sample2.hilihase_step(5);
-		Sample2.hilihase_step(6);
-		Sample2.hilihase_read(1, (byte) 1);
+		assertEquals("helo", ValueE.high, signals.get(2).toInteger());
+
+		NativeInterface.hilihase_step(3);
+		NativeInterface.hilihase_step(4);
+		NativeInterface.hilihase_read(1, (byte) 0, localTime);
+		
+		NativeInterface.hilihase_step(5);
+		NativeInterface.hilihase_step(6);
+		NativeInterface.hilihase_read(1, (byte) 1, localTime);
 		
 		System.out.println("END");
 
 		Global.joinAllTCs();
-
+		}finally{
+			NativeInterface.hilihase_close(-1);
+		}
 	}
 
 }

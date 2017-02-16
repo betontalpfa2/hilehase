@@ -62,7 +62,16 @@
         <version>1.5.0</version>
         <groupId>org.codehaus.mojo</groupId>
         <executions>
-          
+          <execution><!-- Run our version calculation script -->
+            <id>generate-dpi-header</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/scripts/generateDPI.sh</executable>
+            </configuration>
+          </execution>
           <execution><!-- Run our version calculation script -->
             <id>TEST</id>
             <phase>test</phase>

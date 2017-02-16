@@ -1,85 +1,71 @@
 package hu.beton.hilihase.jfw;
 
-public class Signal {
-	private ValueE previous;
-	private ValueE val = ValueE.UNDEFINED;
-	private int lastChange;
-	private String name;
-	private int id;
-	
-	public Signal(int id, String name, ValueE val) {
-		this.id = id;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
+public class Signal extends SimVariable<ValueE, SignalEvent> {
+	private List<Changes> vals;
+	//	private List<ValueE> vals;
+	String name;
+	//	ValueE val2;
+
+	Signal(int ID, String name, ValueE val) {
+		super(ID);
+		vals = new ArrayList<Changes>();
 		this.name = name;
-		set(val);
-	}
-	
-
-	public synchronized void drive(ValueE value) {
-//		Base.getBase().getConnector().hilihase_drve(id, (byte) value.getVal());
-		Sample2.hilihase_drve(id, (byte) value.getVal());
-		
-//		set(value);
+		_set_(val);
 	}
 
+	@Override
+	protected void _set_(ValueE val) {
+		this.vals.add(new Changes(val));
+	}
+
+	@Override
+	protected ValueE _get_() {
+		return _get_(0);
+		//		return vals.get(vals.size()-1);
+	}
+
+	protected ValueE _get_(int fromNow) {
+		return _get_at_(Global.getTime()+fromNow);
+	}
 
 
-	public synchronized void set(ValueE value) {
-		if(previous == val){
-			return;
+	protected ValueE _get_at_(int time) {
+		try{
+			ListIterator<Changes> iter = vals.listIterator(vals.size());
+
+			while (true) {
+				Changes ch = iter.previous();
+				if(ch.time<=time){	// Throws NoSuchElementException 
+					return ch.level; 
+				}
+			}
+		}catch(Exception ex){
+			return ValueE.UNDEFINED;
 		}
-		previous = val;
-		val = value;
-		lastChange = Base.getBase().getTime();
-		notifyAll();
-	}
-	
-	public synchronized void at(SignalEvent evt) {
-		try {
-			while(! check_event(evt) )
-				wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
-	private boolean check_event(SignalEvent evt) {
-		if(previous.equals(val))
-			return false;
-		switch (evt) {
+
+	@Override
+	boolean isEventActive(SignalEvent event) {
+		switch (event) {
 		case POSEDGE:
-			if (val.getVal()>previous.getVal()){
-				return true;
-			}
-			return false;
+			boolean ret = _get_(-1) == ValueE.LOW & _get_(0) != ValueE.LOW ;
+			return ret;
 		case NEGEDGE:
-
-			if (val.getVal()<previous.getVal()){
-				return true;
-			}
-
-			return false;
-
+			return _get_(-1) == ValueE.HIGH & _get_(0) != ValueE.HIGH ;
 		default:
-			return false;
+			throw new IllegalArgumentException("Event type is not supported or not implemented.");
+//			break;
 		}
-	}
-	
-	public synchronized byte drive(){
-		try {
-			while(true){
-				if(lastChange == Base.getBase().getTime())
-					return (byte) val.getVal();
-				wait();
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return (byte) 255;
-		}
+//		return event.equals(_get_());
 	}
 
 	public String getName() {
 		return name;
 	}
+
 }

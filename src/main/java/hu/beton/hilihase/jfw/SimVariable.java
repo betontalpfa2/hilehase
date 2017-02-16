@@ -1,35 +1,48 @@
 package hu.beton.hilihase.jfw;
 
-public abstract  class SimVariable {
+public abstract  class SimVariable<ValueType, EventType> implements ISimVariable<ValueType, EventType> {
+	/**
+	 * ID: unique global identifier.
+	 * Its the same for sysverilog communication and in JAVA  
+	 */
+	private final int ID;
+//	private static int maxID;
 	
+	SimVariable(int ID){
+		this.ID = ID;
+	}
 	
-	protected synchronized void set(int val) {
-		_set_();
+	public void set(ValueType val) {
+		synchronized (this) {
+			_set_(val);
+		}
 		processWaitOn();
 	}
 
-	protected abstract void _set_();
-	protected abstract int _get_();
+	protected abstract void _set_(ValueType val);
+	protected abstract ValueType _get_();
+	abstract boolean isEventActive(EventType event);
 
 
-	protected synchronized int get() {
+	public  synchronized ValueType get() {
 		return _get_();
 	}
 
-	@Override
-	public
-	synchronized void processWaitOn() {
-		notifyAll();
+	public void processWaitOn() {
+		synchronized (this) {
+			notifyAll();
+			Global.wakeTCThreads(this.ID);
+		}
 		Global.waitTCs();
 		return;
 	}
 
-	@Override
-	public synchronized void WaitOn(Integer event, Object thread ) { //TODO void?
-		if(isEventActive(event))
+	public synchronized void WaitOn(EventType event, TCThread thread ) {
+		if(isEventActive(event)){
 			return;
+		}
 		
-		Global.changeControl(thread, this);
+		Global.tcThreadToSleep(thread, ID);
 
 		while(true){
 			try {
@@ -44,9 +57,5 @@ public abstract  class SimVariable {
 		}
 	}
 
-	private boolean isEventActive(Integer event) {
-		// TODO Auto-generated method stub
-		return event.equals(val);
-		//return false;
-	}
+
 }

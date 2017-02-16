@@ -18,5 +18,8 @@ public enum ValueE {
 	static ValueE ValueOf(int val){
 		return ValueE.values()[val];
 	}
+	public int toInteger() {
+		return getVal();
+	}
 		
 }

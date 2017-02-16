@@ -17,16 +17,16 @@ public class QuestaBehav implements Runnable {
 	
 	@Override
 	public void run() {
-		Global.init();
+		Global.init(false);
 		Global.create_time();
 		int id = 1;
 		for(String signalName : signalNames){
 			Global.register_signal(id, signalName, ValueE.LOW);
 		}
-		
-		Global.registerTCThread(tct);
-		Thread th = new Thread(tct);
-		th.start();
+		Global.startTC("IndiTest");
+//		Global.registerTCThread(tct);
+//		Thread th = new Thread(tct);
+//		th.start();
 		
 		Signal clk = Global.get("clock_sig");
 		Time time = (Time) Global.get(0);
@@ -59,12 +59,13 @@ public class QuestaBehav implements Runnable {
 		clk.set(ValueE.LOW);
 		System.out.println("END");
 
-		try {
-			th.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			th.join();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		Global.joinAllTCs();
 
 	}
 

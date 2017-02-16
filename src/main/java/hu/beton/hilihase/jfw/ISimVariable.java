@@ -2,6 +2,7 @@ package hu.beton.hilihase.jfw;
 
 public interface ISimVariable<ValueType, EventType> {
 	void set(ValueType val) ;
+	void set(int value);
 
 //	abstract void _set_(ValueType val);
 //	abstract ValueType _get_();
@@ -12,6 +13,7 @@ public interface ISimVariable<ValueType, EventType> {
 	public void processWaitOn() ;
 
 	public void WaitOn(EventType event, TCThread thread );
+
 
 ////	protected boolean isEventActive(EventType event);
 //	

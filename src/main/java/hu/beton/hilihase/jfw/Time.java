@@ -26,4 +26,11 @@ public class Time extends SimVariable<Integer, Integer> {
 		return event.equals(_get_());
 	}
 
+	@Override
+	public void set(int value) {
+		set(Integer.valueOf(value));
+	}
+
+	
+
 }

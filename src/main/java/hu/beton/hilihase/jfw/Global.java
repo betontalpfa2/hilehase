@@ -4,38 +4,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Global {
-	
+
 	enum ThreadState {
 		Running,
 		Wait
 	}
-	
-	private List<ThreadStateC> tcThreadsState; // = new ArrayList<String>();
-//	private int[] tcThreads;
+
+	private static List<TCThreadStateC> tcThreadsState; // = new ArrayList<String>();
+	//	private int[] tcThreads;
 	private boolean waitingSigTh = false;
 	private static Global me = null;
 	private static Time simTimeSignal;
 	private static List<ISimVariable<?, ?>> signals;
 	int runningCount;
-	
-	class ThreadStateC{
+	String testcasePath = null;
+//	static boolean  loadLibraries = true;
+
+	class TCThreadStateC{
 		ThreadState state;
-		int waitOn;	// Negative means a stopped thread or error
-//		static int runningCount;
-		
-		ThreadStateC(ThreadState state, int waitOn){
+		int waitOn;// Negative means a stopped thread or error
+		//		static int runningCount;
+		final TCThread tct;
+
+		TCThreadStateC(ThreadState state, int waitOn, TCThread tct){
 			set(state, waitOn);
+			this.tct = tct;
 		}
-		
+
 		public void set(ThreadState state, int waitOn) {
 			setState(state);
 			this.waitOn = waitOn;
 		}
-		
+
 		private void setState( ThreadState state){
 			if(ThreadState.Running == state & 
 					ThreadState.Running != this.state)
-			Global.this.runningCount++;
+				Global.this.runningCount++;
 			if(ThreadState.Running != state & 
 					ThreadState.Running == this.state)
 				Global.this.runningCount--;
@@ -48,29 +52,42 @@ public class Global {
 			}
 		}
 	}
-	
 
-	
-	Global() {
-		tcThreadsState  = new ArrayList<ThreadStateC>();
+
+
+	Global(boolean loadlibraries) {
+		if(loadlibraries){
+			System.out.println(System.getProperty("java.library.path"));
+			System.loadLibrary("jfw-1.0-SNAPSHOT");
+		}
+		else{
+			System.err.println("WARNING: Libraries wasn't loaded. Use this mod is only for test/debug.");
+		}
+		tcThreadsState  = new ArrayList<TCThreadStateC>();
 		signals  = new ArrayList<>();
 		me = this;
 		runningCount = 0;
 	}
-	
-	static void init() {
-		if (null == me)
-			new Global();
+
+	static void init(){
+		init(true);
 	}
 	
+	static void init(boolean loadlibraries) {
+		if (null == me){
+//			Global.loadLibraries = loadlibraries;
+			new Global(loadlibraries);
+		}
+	}
+
 	static void cleanup(){
 		me = null;
 	}
-	
+
 	public static void waitTCs() {
 		me._waitTCs_();
 	}
-	
+
 	private synchronized void _waitTCs_() {
 		if(waitingSigTh){
 			return;
@@ -87,7 +104,7 @@ public class Global {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private int getCoutOfRunningTcs() {
 		return runningCount;
 	}
@@ -97,7 +114,7 @@ public class Global {
 	}
 
 	private synchronized void _wakeTCThreads_(int on) {
-		for(ThreadStateC tcth : tcThreadsState){
+		for(TCThreadStateC tcth : tcThreadsState){
 			tcth.wakeIF(on);
 		}
 	}
@@ -115,15 +132,15 @@ public class Global {
 			notifyAll();
 		}
 	}
-	
+
 
 	synchronized static void registerTCThread(TCThread thread) {
 		me._registerTCThread_(thread);
 	}
-	
+
 	synchronized void _registerTCThread_(TCThread thread) {
 		thread.setID(tcThreadsState.size());
-		tcThreadsState.add(new ThreadStateC(ThreadState.Running, 0));
+		tcThreadsState.add(new TCThreadStateC(ThreadState.Running, 0, thread));
 	}
 
 	public static void waitSim(int time, TCThread tcThread) {
@@ -132,18 +149,18 @@ public class Global {
 
 	public static Signal getSignal(int id) {
 		ISimVariable<?, ?> ret1 = signals.get(id);
-//		Time ret = (Time) ret1;
+		//		Time ret = (Time) ret1;
 		return (Signal) ret1;
 	}
-	
+
 	public static ISimVariable<?, ?> get(int id) {
 		ISimVariable<?, ?> ret = signals.get(id);
 		return ret;
 	}
-	
+
 	public static Signal get(String name) throws IllegalArgumentException {
 		for(ISimVariable<?, ?> signal: signals){
-			
+
 			if(null == signal){
 				continue;
 			}
@@ -152,27 +169,27 @@ public class Global {
 			}
 
 			Signal sig = (Signal) signal;
-			
+
 			if(sig.getName().equals(name)){
 				return sig;
 			}
 		}
 		throw new IllegalArgumentException("Cannot found signal named: " + name);
 	}
-	
+
 	static void register_signal(int id, String name, ValueE val){
 		signals.add(id, new Signal(id, name, val));
 	}
-	
+
 	static void register_time(Time time){
 		signals.add(0, time);
 		simTimeSignal = time;
 	}
 
-//	public void read_signal(int id, ValueE value) {
-//		signals.get(id).set(value);
-//	}
-	
+	public static void read_signal(int id, int value) {
+		signals.get(id).set(value);
+	}
+
 
 	public static int getTime() {
 		return simTimeSignal.get();
@@ -180,6 +197,41 @@ public class Global {
 
 	public static void create_time() {
 		register_time(new Time(0));
+	}
+
+	public static void startTC(String tcName) {
+		List<Class<?>> classes = ClassFinder.find("hu.beton.hilihase.testcases");
+		for(Class<?> cl : classes){
+			System.out.println("Classname: " + cl.getName());
+			if(cl.getName().endsWith(tcName)){
+				System.out.println("Class math: " + cl.getName() + " instatniating...");
+				try {
+					Object testInst = cl.newInstance();
+					TCThread tct = (TCThread) testInst;
+					Global.registerTCThread(tct);
+					Thread th = new Thread(tct);
+					th.start();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	public static void joinAllTCs() {
+		for(TCThreadStateC tc : tcThreadsState){
+			try {
+				tc.tct.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 

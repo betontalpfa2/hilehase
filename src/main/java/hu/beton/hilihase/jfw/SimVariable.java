@@ -56,6 +56,10 @@ public abstract  class SimVariable<ValueType, EventType> implements ISimVariable
 			}
 		}
 	}
-
+	
+//	@Override
+//	public void set(int value) {
+//		set(ValueType.valueOf(value));
+//	}
 
 }

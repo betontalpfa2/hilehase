@@ -1,9 +1,6 @@
 package hu.beton.hilihase.jfw;
 
 import static org.junit.Assert.*;
-
-import java.awt.Event;
-
 import org.junit.*;
 
 public class SignalTest {
@@ -12,7 +9,7 @@ public class SignalTest {
 	@Test
 	public void test_set_get() {
 		try{
-			Global.init();
+			Global.init(false);
 
 			Signal sig1 = new Signal(0, "clock_signal", ValueE.HIGH);
 
@@ -29,18 +26,17 @@ public class SignalTest {
 	@Test
 	public void test_singleTC() {
 		try{
-			Global.init();
+			Global.init(false);
 			Signal sig1 = new Signal(0, "clock_signal", ValueE.HIGH);
 			ValueE val = ValueE.HIGH;
 
 			TCThread tct = new TCThread() {
 
 				@Override
-				public void run() {
+				public void test() {
 					sig1._set_(val);
-					//				assertEquals("set-get", val, sig1.get());
-					//				sig1._set_(val);
 				}
+				
 			};
 			Global.registerTCThread(tct);
 
@@ -65,7 +61,7 @@ public class SignalTest {
 	@Test
 	public void test_register() {
 		try{
-			Global.init();
+			Global.init(false);
 			SimVariable<?, ?> tim = new Time(1);
 			Global.register_time((Time)tim);
 
@@ -76,7 +72,7 @@ public class SignalTest {
 			TCThread tct = new TCThread() {
 
 				@Override
-				public void run() {
+				public void test() {
 					Signal sig1;
 					sig1 = Global.get(name);
 					sig1._set_(val);
@@ -109,15 +105,14 @@ public class SignalTest {
 			TCThread tct = new TCThread() {
 
 				@Override
-				public void run() {
-					Signal sig1;
+				public void test() {
+					/*Signal sig1;
 					sig1 = Global.get("clock_sig");
 					System.out.println("POS");
 					sig1.WaitOn(SignalEvent.POSEDGE, this);
 					assertEquals("simtime", 5, Global.getTime());
 					assertEquals("set-get", val, sig1.get());
-					System.out.println("TC: FIN");
-					Global.tcThreadToSleep(this, -1);
+					System.out.println("TC: FIN");	*/		
 				}
 			};
 

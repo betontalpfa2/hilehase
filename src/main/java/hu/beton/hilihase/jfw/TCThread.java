@@ -1,14 +1,24 @@
 package hu.beton.hilihase.jfw;
 
-public abstract class TCThread implements Runnable {
+public abstract class TCThread extends Thread   {
 	private int ID;
+	
+//	TCThread(){
+////		Thread th = new Thread();
+//		
+//	}
 	
 	void waitSim(int time){
 		Global.waitSim(time, this);
 	}
 	
+	public abstract void test();
+	
 	@Override
-	public abstract void run();
+	public void run(){
+		test();
+		Global.tcThreadToSleep(this, -1);		
+	}
 
 	int getID() {
 		return this.ID;
@@ -17,5 +27,8 @@ public abstract class TCThread implements Runnable {
 	void setID(int ID) {
 		this.ID = ID; 
 	}
+	
+	
+	
 
 }

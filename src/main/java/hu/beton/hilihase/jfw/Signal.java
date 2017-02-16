@@ -68,4 +68,9 @@ public class Signal extends SimVariable<ValueE, SignalEvent> {
 		return name;
 	}
 
+//	@Override
+	public void set(int value) {
+		set(ValueE.ValueOf(value));
+	}
+
 }

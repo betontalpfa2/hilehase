@@ -69,8 +69,8 @@ public class Global {
 			System.err.println("WARNING: Libraries wasn't loaded. Use this mod is only for test/debug.");
 		}
 		tcThreadsState  = new ArrayList<TCThreadStateC>();
-		signals  = new ArrayList<>();
-		signals.add(new Time(0));
+		signals  = new ArrayList<SimVariable<?, ?>>();
+		register_time(new Time(0));
 		me = this;
 		runningCount = 0;
 		signalDrvQueue = Collections.synchronizedList(new ArrayList<SignalDrv>());

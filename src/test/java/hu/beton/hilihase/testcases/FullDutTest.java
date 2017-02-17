@@ -7,6 +7,17 @@ import hu.beton.hilihase.jfw.SignalEvent;
 import hu.beton.hilihase.jfw.TCThread;
 import hu.beton.hilihase.jfw.ValueE;
 
+/**
+ * This is the first testcase which uses the NativeInterface methods. Note that
+ * it does not use the dynamic library, just call the Java method (and test
+ * methods) directly.
+ * 
+ * Simpler/Higher-abstraction test: IndiTest
+ * Next level test:					Minimal 
+ * 
+ * @author ebenera
+ *
+ */
 public class FullDutTest extends TCThread {
 
 	@Override

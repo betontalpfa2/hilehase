@@ -1,9 +1,11 @@
 package hu.beton.hilihase.dut;
 
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
 import hu.beton.hilihase.jfw.Global;
 import hu.beton.hilihase.jfw.NativeInterface;
 import hu.beton.hilihase.jfw.ValueE;
@@ -23,6 +25,7 @@ public class FullDut implements Runnable{
 	
 	
 	@Override
+	@Test
 	public void run() {
 		try{
 		NativeInterface.hilihase_init_debug(1, signals);

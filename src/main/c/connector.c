@@ -1,6 +1,7 @@
 
 #include <jni.h>
 #include <string.h>
+#include <unistd.h>
 #include "hu_beton_hilihase_jfw_Sample2.h"
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
@@ -107,7 +108,7 @@ int  hilihase_close ( ){
 int __function_getter__(jmethodID* mid, const char* name, const char* decoration){
     *mid = (*env)->GetStaticMethodID(env, cls, name, decoration);
     if(0 == *mid){
-        printf("Error: %s method not found\n", name);
+        printf("Error: %s method not found int the java framework (decoration: >>%s<<)\n", name, decoration);
         error_code = METHOD_NOT_FOUND;
         return error_code;
     }
@@ -133,12 +134,18 @@ int  hilihase_init ( int argc, const char* argv ){
     } else {
         strcat(path, ".");
     }
+    strcat(path, ":./test-classes");
     
-    options[0].optionString = "-Djava.library.path=/home/ebenera/hilihase/target/nar/jfw-1.0-SNAPSHOT-amd64-Linux-gpp-shared/lib/amd64-Linux-gpp/shared";
+    char cwd[1024];
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
+       fprintf(stdout, "Current working dir: %s\n", cwd);
+   
+    options[0].optionString = "-Djava.library.path=./nar/jfw-1.0-SNAPSHOT-amd64-Linux-gpp-shared/lib/amd64-Linux-gpp/shared";
     options[1].optionString = path;
+    // options[3].optionString = "-Djava.class.path=./test-classes";
     // strcat(options[0].optionString, path); // "-Djava.class.path=.";
     memset(&vm_args, 0, sizeof(vm_args));
-    vm_args.version = JNI_VERSION_1_2;
+    vm_args.version = JNI_VERSION_1_6;
     vm_args.nOptions = nOOptions;
     vm_args.options = options;
     
@@ -164,16 +171,16 @@ int  hilihase_init ( int argc, const char* argv ){
       return JVM_CREATE_ERROR;
     }
     printf("Info: Finding class... \n");
-    cls = (*env)->FindClass(env, "hu/beton/hilihase/jfw/Sample2");
+    cls = (*env)->FindClass(env, "hu/beton/hilihase/jfw/NativeInterface");
     if(0 == cls) {
-        printf("Error: Sample2 class not found. (JVM options: %s)\n", path);
+        printf("Error: NativeInterface class not found. (JVM options: %s)\n", path);
         fflush(stdout);
         return CLASS_NOT_FOUND;
     }
     printf("Info: Getting methods... ");
     __function_getter__(&jvm_echo, "echo", "(I)I");
     __function_getter__(&jvm_hilihase_step, "hilihase_step", "(I)I");
-    __function_getter__(&jvm_hilihase_read, "hilihase_read", "(IB)I");
+    __function_getter__(&jvm_hilihase_read, "hilihase_read", "(IBI)I");
     __function_getter__(&jvm_hilihase_register, "hilihase_register", "(ILjava/lang/String;B)I");
     __function_getter__(&jvm_hilihase_init, "hilihase_init", "(I)I");
     __function_getter__(&jvm_hilihase_start_tc, "hilihase_start_tc", "(Ljava/lang/String;)I");
@@ -261,12 +268,12 @@ int  hilihase_register (int id, const char* name, byte init_val){
  *   to inform the JAva framework about the state of signals
  *   Use registered id to identify the signals.
  */
-int  hilihase_read (int id, byte a){
+int  hilihase_read (int id, byte a, int sim_time){
     int ret = check_callability(jvm_hilihase_read);
     if ( ret<0 ){
         return ret;
     }
-    return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_read, id, a);
+    return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_read, id, a, sim_time);
     
 }
 
@@ -306,7 +313,8 @@ int hilihase_start_tc(const char*  tcName){
     if ( ret<0 ){
         return ret;
     }
-    return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_start_tc, tcName);
+    jstring jstrBuf = (*env)->NewStringUTF(env, tcName);
+    return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_start_tc, jstrBuf);
     
 }
 

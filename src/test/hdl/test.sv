@@ -87,7 +87,7 @@ module Bus();
      *   to inform the JAva framework about the state of signals
      *   Use registered id to identify the signals.
      */
-    import "DPI-C" function int  hilihase_read (int id, byte a);
+    import "DPI-C" function int  hilihase_read (int id, byte a, int sim_time);
     
     
     import "DPI-C" function int  hilihase_start_tc(string str);
@@ -119,7 +119,7 @@ module Bus();
     task automatic hilihase_read_wrap(int id,  ref  logic signal_to_listen );
     begin    
         forever @(signal_to_listen) begin
-           a=  hilihase_read (id,  convert(signal_to_listen ));
+           a=  hilihase_read (id,  convert(signal_to_listen ), $realtime);
     // $display("[%t ] b2: %d", $realtime (), a); 
         end
     end
@@ -148,11 +148,12 @@ module Bus();
         top_cin = 0;
     
         $display("BABABABA LILALALALALAL");
-        a= hilihase_init(2, "/home/ebenera/hilihase/target/classes");
+        a= hilihase_init(2, "./classes");
         assert(a==0);
         $display(a);
         if (a<0)$finish(a);
         
+        // a= hilihase_register_time(0, "top_x", top_x);
         a= hilihase_register(1, "top_x", top_x);
         assert(a==0)else begin  $error("hilihase_register: top_x");$finish(a); end
         a= hilihase_register(2, "top_y", top_y);
@@ -163,7 +164,7 @@ module Bus();
         assert(a==0)else begin  $error("hilihase_register: out");$finish(a); end
         a= hilihase_register(5, "carryout", carryout);
         assert(a==0)else begin  $error("hilihase_register: carryout");$finish(a); end
-        a= hilihase_start_tc("minimal");
+        a= hilihase_start_tc("Minimal");
         assert(a==0)else begin  $error("hilihase_start_tc: minimal");$finish(a); end
         /*
         $display("BABABABA FTFTFTFTFT");
@@ -181,19 +182,19 @@ module Bus();
             
         join;
         */
-        #1
-          top_x = 1;
+        #2
+        top_x = 1;
         top_y = 1;
         top_cin = 1;
         #10
-          top_x = 0;
+        top_x = 0;
         top_y = 1;
         top_cin = 0;
         #10
-          top_x = 1;
+        top_x = 1;
         top_y = 0;
         top_cin = 1;
-            #100
+        #100
         a =hilihase_close ( ) ;
         $finish(0);
     end 

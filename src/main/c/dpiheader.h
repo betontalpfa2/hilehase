@@ -47,7 +47,8 @@ DPI_LINK_DECL DPI_DLLESPEC
 int
 hilihase_read(
     int id,
-    char a);
+    char a,
+    int sim_time);
 
 DPI_LINK_DECL DPI_DLLESPEC
 int

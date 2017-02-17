@@ -1,9 +1,9 @@
 package hu.beton.hilihase.jfw;
 
-import static org.junit.Assert.*;
-import hu.beton.hilihase.dut.FullDut;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.*;
+import org.junit.Test;
 
 public class SignalTest {
 
@@ -29,11 +29,11 @@ public class SignalTest {
 	public void test_singleTC() {
 		try{
 			Global.init(false);
-			Signal sig1 = new Signal(0, "clock_signal", ValueE.HIGH);
-			ValueE val = ValueE.HIGH;
+			final Signal sig1 = new Signal(0, "clock_signal", ValueE.HIGH);
+			final ValueE val = ValueE.HIGH;
 
 			TCThread tct = new TCThread() {
-
+				
 				@Override
 				public void test() {
 					sig1._set_(val);
@@ -67,9 +67,9 @@ public class SignalTest {
 			SimVariable<?, ?> tim = new Time(1);
 			Global.register_time((Time)tim);
 
-			String name = "clock_signal";
+			final String name = "clock_signal";
 			Global.register_signal(1, name, ValueE.HIGH);
-			ValueE val = ValueE.HIGH;
+			final ValueE val = ValueE.HIGH;
 
 			TCThread tct = new TCThread() {
 

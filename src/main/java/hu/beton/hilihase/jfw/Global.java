@@ -69,8 +69,8 @@ public class Global {
 			System.err.println("WARNING: Libraries wasn't loaded. Use this mod is only for test/debug.");
 		}
 		tcThreadsState  = new ArrayList<TCThreadStateC>();
-		signals  = new ArrayList<>();
-		signals.add(new Time(0));
+		signals  = new ArrayList<SimVariable<?, ?>>();
+		register_time(new Time(0));
 		me = this;
 		runningCount = 0;
 		signalDrvQueue = Collections.synchronizedList(new ArrayList<SignalDrv>());
@@ -216,6 +216,12 @@ public class Global {
 
 	protected static void startTC(String tcName) {
 		List<Class<?>> classes = ClassFinder.find("hu.beton.hilihase.testcases");
+        try{
+			System.out.println("Finding testclass: " + tcName);
+        } catch(NullPointerException ex){
+			System.out.println("The name of the testcase is null!!! Please specify a valid testcase name");
+            throw ex;
+        }
 		for(Class<?> cl : classes){
 			System.out.println("Classname: " + cl.getName());
 			if(cl.getName().endsWith(tcName)){

@@ -24,9 +24,17 @@
         <extensions>true</extensions>
         <executions>
             <execution>
+              <id>compile-C-shared-lib</id>
               <phase>compile</phase>
               <goals>
                   <goal>nar-compile</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>generate_c_header_from_java</id>
+              <phase>generate-sources</phase>
+              <goals>
+                  <goal>nar-javah</goal>
               </goals>
             </execution>
         </executions>

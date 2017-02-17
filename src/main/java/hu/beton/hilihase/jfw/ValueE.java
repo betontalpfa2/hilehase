@@ -22,6 +22,23 @@ public class ValueE {
 	public int toInteger() {
 		return getVal();
 	}
+    
+    
+	public String toString() {
+		switch(val){
+            case low:
+                return "LOW";
+            case high:
+                return "HIGH";
+            case undefined:
+                return "UNDEFINED";
+            case highz:
+                return "HIGZ";
+            default:
+                return "Tihs could not be happen...";
+            }
+	}
+    
 //	@Override
 	public void set(int val) {
 		this.val = val;
@@ -31,8 +48,11 @@ public class ValueE {
 	public boolean equals(int i) {
 		return i == val;
 	}
-	
-	public boolean equals(ValueE other) {
-		return other.val == this.val;
+    
+	@Override
+	public boolean equals(Object other) {
+        return equals(((ValueE)other).val);
+		// return ((ValueE)other).val == this.val;
 	}
+   
 }

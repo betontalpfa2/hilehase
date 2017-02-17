@@ -18,6 +18,7 @@ import hu.beton.hilihase.jfw.ValueE;
 public class Minimal extends TCThread {
 
 	static public void assertEquals(String message, Object expected, Object actual) {
+//		message += ((Signal)actual).
 	    if (expected == null && actual == null) {
 	    	System.err.println("OK: " + message);
 	        return;
@@ -53,37 +54,39 @@ public class Minimal extends TCThread {
 	    System.out.println("POS");
 		clk.WaitOn(SignalEvent.POSEDGE, this);
 		assertEquals("simtime at ", 5, Global.getTime());
-		assertEquals("set-get", ValueE.HIGH, clk.get());
+		assertEquals("set-get ", ValueE.HIGH, clk.get());
         
         
-		assertEquals("set-get", ValueE.LOW, x.get());
-		assertEquals("set-get", ValueE.LOW, y.get());
-		assertEquals("set-get", ValueE.LOW, cin.get());
-        assertEquals("set-get", ValueE.LOW, out.get());
-        assertEquals("set-get", ValueE.LOW, carryout.get());
+		assertEquals("set-get x", ValueE.LOW, x.get());
+		assertEquals("set-get y ", ValueE.LOW, y.get());
+		assertEquals("set-get cin", ValueE.LOW, cin.get());
+        assertEquals("set-get out", ValueE.LOW, out.get());
+        assertEquals("set-get carryout", ValueE.LOW, carryout.get());
 		
         x.drive(ValueE.HIGH);
 		x.WaitOn(SignalEvent.POSEDGE, this);
 
-		assertEquals("set-get", ValueE.HIGH, x.get());
-		assertEquals("set-get", ValueE.LOW, y.get());
-		assertEquals("set-get", ValueE.LOW, cin.get());
-		assertEquals("set-get", ValueE.HIGH, out.get());
-		assertEquals("set-get", ValueE.LOW, carryout.get());
+		assertEquals("set-get x", ValueE.HIGH, x.get());
+		assertEquals("set-get y", ValueE.LOW, y.get());
+		assertEquals("set-get cin", ValueE.LOW, cin.get());
 
-	    System.out.println("POS");
-		clk.WaitOn(SignalEvent.POSEDGE, this);
-		assertEquals("simtime at ", 15, Global.getTime());
-		assertEquals("set-get", ValueE.HIGH, clk.get());
+	    System.out.println("NEG");
+		clk.WaitOn(SignalEvent.NEGEDGE, this);
+		assertEquals("set-get out", ValueE.HIGH, out.get());
+		assertEquals("set-get carryout", ValueE.LOW, carryout.get());
+		assertEquals("simtime at ", 10, Global.getTime());
+		assertEquals("set-get clk", ValueE.LOW, clk.get());
         
         y.drive(ValueE.HIGH);
 		y.WaitOn(SignalEvent.POSEDGE, this);
 
-		assertEquals("set-get", ValueE.HIGH, x.get());
-        assertEquals("set-get", ValueE.LOW, y.get());
-        assertEquals("set-get", ValueE.LOW, cin.get());
-        assertEquals("set-get", ValueE.HIGH, out.get());
-        assertEquals("set-get", ValueE.LOW, carryout.get());
+	    System.out.println("POS");
+		clk.WaitOn(SignalEvent.POSEDGE, this);
+		assertEquals("set-get x", ValueE.HIGH, x.get());
+        assertEquals("set-get y", ValueE.HIGH, y.get());
+        assertEquals("set-get cin", ValueE.LOW, cin.get());
+        assertEquals("set-get out", ValueE.LOW, out.get());
+        assertEquals("set-get cout", ValueE.HIGH, carryout.get());
         
 		System.out.println("TC: FIN at " + Global.getTime());		
 

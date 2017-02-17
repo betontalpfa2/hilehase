@@ -57,7 +57,7 @@ public class Signal extends SimVariable<ValueE, SignalEvent> {
 			boolean ret = _get_(-1).equals(ValueE.LOW) & !_get_(0).equals(ValueE.LOW) ;
 			return ret;
 		case NEGEDGE:
-			return _get_(-1).equals(ValueE.HIGH) & _get_(0).equals(ValueE.HIGH) ;
+			return _get_(-1).equals(ValueE.HIGH) & !_get_(0).equals(ValueE.HIGH) ;
 		default:
 			throw new IllegalArgumentException("Event type is not supported or not implemented.");
 //			break;

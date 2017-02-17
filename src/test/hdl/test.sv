@@ -87,7 +87,7 @@ module Bus();
      *   to inform the JAva framework about the state of signals
      *   Use registered id to identify the signals.
      */
-    import "DPI-C" function int  hilihase_read (int id, byte a, int sim_time);
+    import "DPI-C" context function int  hilihase_read (int id, byte a, int sim_time);
     
     
     import "DPI-C" function int  hilihase_start_tc(string str);
@@ -106,7 +106,7 @@ module Bus();
     
     function void hilihase_drive2(int id, byte data);
     begin
-        $display("FSDFSDFSDFSDFSDFSDFSDFSDFSFSDF$$$$$$$$$$$$$$$$$$$$$$$");
+        $display("FSDFSDFSDFSDFSDFSDFSDFSDFSFSDF$$$$$$$$$$$$$$$$$$$$$$$ %d,  %d  ", id, data);
          case (id)
             1: top_x = data;
             2: top_y = data;
@@ -128,22 +128,22 @@ module Bus();
     /**************************************************************************/
     /**************************** Instantiate top module **********************/
     /**************************************************************************/
-     
-    fulladder uut (
-        .x(top_x),
-        .y(top_y),
-        .cin(top_cin),
-        .A(out),
-        .cout(carryout)
-    );
+       assign {carryout,out} =  top_cin + top_y + top_x;
+    // fulladder uut (
+        // .x(top_x),
+        // .y(top_y),
+        // .cin(top_cin),
+        // .A(out),
+        // .cout(carryout)
+    // );
     
     /**************************************************************************/
     /**************************** Connect HILIHASE ****************************/
     /**************************************************************************/
     
     initial begin
-        $monitor("monitor a:%h b:%h @ %0t", out, carryout, $time);
-        $monitor("monitor a:%h b:%h @ %0t", top_x, top_y, $time);
+        $monitor("monitor out:%h carryout:%h @ %0t", out, carryout, $time);
+        $monitor("monitor top_x:%h top_y:%h @ %0t", top_x, top_y, $time);
         top_x = 0;
         top_y = 0;
         top_cin = 0;

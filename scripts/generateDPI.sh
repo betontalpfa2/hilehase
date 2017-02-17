@@ -37,4 +37,4 @@ if [  -z ${__SETUP_RUNNED__+x} ]
   exit 1
 fi
 
-vlog -dpiheader ./src/main/c/dpiheader.h src/test/hdl/test.sv
+vlog -dpiheader ../src/main/c/dpiheader.h ../src/test/hdl/test.sv

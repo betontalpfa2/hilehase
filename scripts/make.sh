@@ -20,7 +20,7 @@ javac ./main/Sample2.java
 # cd ..
 
 echo "Compiling test.sv ..."
-cd target 
+# cd target 
 vlog ../src/test/hdl/full_adder.v
 vlog ../src/test/hdl/test.sv
 if [ $? != 0 ]

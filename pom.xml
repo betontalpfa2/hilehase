@@ -69,6 +69,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
+              <workingDirectory>${basedir}/target</workingDirectory>
               <executable>${basedir}/scripts/generateDPI.sh</executable>
             </configuration>
           </execution>
@@ -79,6 +80,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
+              <workingDirectory>${basedir}/target</workingDirectory>
               <executable>${basedir}/scripts/test.sh</executable>
             </configuration>
           </execution>
@@ -89,6 +91,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
+              <workingDirectory>${basedir}/target</workingDirectory>
               <executable>${basedir}/scripts/make.sh</executable>
             </configuration>
           </execution>

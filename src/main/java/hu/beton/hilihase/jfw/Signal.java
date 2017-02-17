@@ -19,6 +19,7 @@ public class Signal extends SimVariable<ValueE, SignalEvent> {
 
 	@Override
 	protected void _set_(ValueE val) {
+        System.out.println("Signal set: " + name + " to " + val.getVal());
 		this.vals.add(new Changes(val));
 	}
 

@@ -1,11 +1,9 @@
 package hu.beton.hilihase.jfw;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Base {
 
-	private static Base base = null;
+//	private static Base base = null;
 //	private List<Signal> signals;
 	
 	Base(){
@@ -46,11 +44,11 @@ public class Base {
 	
 	
 
-	public static void initBase() {
-		base = new Base();
-	}
+//	public static void initBase() {
+////		base = new Base();
+//	}
 	public static void destroyBase() {
-		base = null;
+//		base = null;
 	}
 
 

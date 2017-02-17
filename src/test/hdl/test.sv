@@ -166,7 +166,7 @@ module Bus();
         assert(a==0)else begin  $error("hilihase_register: carryout");$finish(a); end
         a= hilihase_start_tc("Minimal");
         assert(a==0)else begin  $error("hilihase_start_tc: minimal");$finish(a); end
-        /*
+        
         $display("BABABABA FTFTFTFTFT");
         $fflush() ;
         fork
@@ -180,8 +180,8 @@ module Bus();
                 // top_x = hilihase_drive(1);
             // end
             
-        join;
-        */
+        join_none;
+        
         #2
         top_x = 1;
         top_y = 1;

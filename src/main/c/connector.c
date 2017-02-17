@@ -273,6 +273,7 @@ int  hilihase_read (int id, byte a, int sim_time){
     if ( ret<0 ){
         return ret;
     }
+    printf("NativeInterface: hilihase_read(): id:%d, val: %d, time: %d", id, a, sim_time);
     return  (*env)->CallStaticIntMethod(env, cls, jvm_hilihase_read, id, a, sim_time);
     
 }

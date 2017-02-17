@@ -66,7 +66,7 @@ public class NativeInterface implements IBase
 	public static int hilihase_init(int debugLevel){
 		try{
 			System.out.println("Initialize JAVA (myself)");
-			Base.initBase();
+//			Base.initBase();
 			Global.init(debugLevel<1);
 			System.out.println("[  OK  ]$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 		} catch (Exception ex){

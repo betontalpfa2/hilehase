@@ -17,8 +17,8 @@ public class Time extends SimVariable<Integer, Integer> {
 		return time;
 	}
 
-	public void waitSim(int time, TCThread tcThread) {
-		WaitOn(time, tcThread);		
+	public void waitSim(int time) {
+		WaitOn(time);		
 	}
 
 	@Override
@@ -26,10 +26,10 @@ public class Time extends SimVariable<Integer, Integer> {
 		return event.equals(_get_());
 	}
 
-	@Override
-	public void set(int value) {
-		set(Integer.valueOf(value));
-	}
+//	@Override
+//	public void set(int value) {
+//		set(Integer.valueOf(value));
+//	}
 
 	@Override
 	Integer valueOf(int value) {

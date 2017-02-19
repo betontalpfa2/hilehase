@@ -112,24 +112,34 @@ public abstract  class SimVariable<ValueType, EventType> implements ISimVariable
 		return;
 	}
 
-	public synchronized void WaitOn(EventType event, TCThread thread ) {
-		if (isEventActive(event, thread.getID())){
+	@Deprecated
+	public synchronized void WaitOn(EventType event, TCThread tct ) {
+		WaitOn(event);
+	}
+	
+	public synchronized void WaitOn(EventType event, long tcThreadId ) {
+		if (isEventActive(event, tcThreadId)){
 			return;
 		}
 
-		Global.tcThreadToSleep(thread, ID);
 
 		while(true){
+			Global.tcThreadToSleep(tcThreadId, ID);
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (isEventActive(event, thread.getID())){
+			if (isEventActive(event, tcThreadId)){
 				return;
 			}
 		}
+	}
+	
+	
+	public synchronized void WaitOn(EventType event) {
+		WaitOn(event, Thread.currentThread().getId());
 	}
 
 	private boolean isEventActive(EventType event, long l) {

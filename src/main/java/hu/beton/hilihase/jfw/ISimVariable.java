@@ -12,7 +12,10 @@ public interface ISimVariable<ValueType, EventType> {
 
 	public void processWaitOn() ;
 
+	@Deprecated
 	public void WaitOn(EventType event, TCThread thread );
+	
+	public void WaitOn(EventType event);
 
 
 ////	protected boolean isEventActive(EventType event);

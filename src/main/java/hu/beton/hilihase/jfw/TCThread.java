@@ -8,8 +8,8 @@ public abstract class TCThread extends Thread   {
 //		
 //	}
 	
-	void waitSim(int time){
-		Global.waitSim(time, this);
+	public void waitSim(int time){
+		Global.waitSim(time);
 	}
 	
 	public abstract void test();
@@ -17,7 +17,7 @@ public abstract class TCThread extends Thread   {
 	@Override
 	public void run(){
 		test();
-		Global.tcThreadToSleep(this, -1);		
+		Global.tcThreadToSleep(getID(), -1);		
 	}
 
 	long getID() {

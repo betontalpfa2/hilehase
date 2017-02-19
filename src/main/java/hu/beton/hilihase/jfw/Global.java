@@ -128,12 +128,12 @@ public class Global {
 		}
 	}
 
-	public static void tcThreadToSleep(TCThread thread, int on) {
-		me._tcThreadToSleep_(thread, on);
+	public static void tcThreadToSleep(long tcThreadId, int on) {
+		me._tcThreadToSleep_(tcThreadId, on);
 	}
 
-	private synchronized void _tcThreadToSleep_(TCThread thread, int on) {
-		tcThreadsState.get(thread.getID()).set(ThreadState.Wait, on);
+	private synchronized void _tcThreadToSleep_(long tcThreadId, int on) {
+		tcThreadsState.get(tcThreadId).set(ThreadState.Wait, on);
 		// The simulator threads aka. Signals are waiting on this class (aka.
 		// Global). If there is no running TC, let wake up them. to continue the
 		// simulation (maybe with the next time-step)
@@ -155,8 +155,12 @@ public class Global {
 		}
 	}
 
-	public static void waitSim(int time, TCThread tcThread) {
-		simTimeSignal.waitSim(time, tcThread);
+	public static void waitSim(int time) {
+		waitSimUntil(time + getTime());
+	}
+	
+	public static void waitSimUntil(int time) {
+		simTimeSignal.waitSim(time);
 	}
 
 	public static Signal getSignal(int id) {
@@ -211,7 +215,7 @@ public class Global {
 
 	static void stepTime(final int time) {
 		process_post_time();
-		assert(time == getTime()+1);
+//		assert(time == getTime()+1);
 		Global.get(0).set(time);
 
 		for (SimVariable<?, ?> signal : signals){

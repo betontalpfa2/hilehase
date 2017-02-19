@@ -23,6 +23,7 @@ echo "Compiling test.sv ..."
 # cd target 
 vlog ../src/test/hdl/full_adder.v
 vlog ../src/test/hdl/test.sv
+vlog ../src/test/hdl/full_adder_tb.sv
 if [ $? != 0 ]
     then
     exit 1

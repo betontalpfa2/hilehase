@@ -41,6 +41,12 @@ public class Time extends SimVariable<Integer, Integer> {
 		assert(false); // Time cannot be driven...
 	}
 
+	@Override
+	protected Integer _get_(int fromNow)  {
+		throw new IllegalAccessError("Wron useage of time");
+//		return null;
+	}
+
 	
 
 }

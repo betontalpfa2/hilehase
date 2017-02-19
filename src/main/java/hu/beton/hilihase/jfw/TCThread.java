@@ -1,7 +1,7 @@
 package hu.beton.hilihase.jfw;
 
 public abstract class TCThread extends Thread   {
-	private int ID;
+//	private int ID;
 	
 //	TCThread(){
 ////		Thread th = new Thread();
@@ -20,13 +20,13 @@ public abstract class TCThread extends Thread   {
 		Global.tcThreadToSleep(this, -1);		
 	}
 
-	int getID() {
-		return this.ID;
+	long getID() {
+		return this.getId();
 	}
 	
-	void setID(int ID) {
-		this.ID = ID; 
-	}
+//	void setID(int ID) {
+//		this.ID = ID; 
+//	}
 	
 	
 	

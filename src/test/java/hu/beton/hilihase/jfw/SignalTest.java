@@ -64,7 +64,7 @@ public class SignalTest {
 	public void test_register() {
 		try{
 			Global.init(false);
-			SimVariable<?, ?> tim = new Time(1);
+			SimVariable<?, ?> tim = new Time(0);
 			Global.register_time((Time)tim);
 
 			final String name = "clock_signal";
@@ -78,7 +78,9 @@ public class SignalTest {
 					Signal sig1;
 					sig1 = Global.get(name);
 					sig1._set_(val);
-					assertEquals("set-get", val, sig1.get());
+					assertEquals("set-get", ValueE.UNDEFINED, sig1.get());
+//					Global.stepTime(1);
+//					assertEquals("set-get", val, sig1.get());
 				}
 			};
 			Global.registerTCThread(tct);

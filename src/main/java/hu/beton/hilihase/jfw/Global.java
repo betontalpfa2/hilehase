@@ -2,7 +2,9 @@ package hu.beton.hilihase.jfw;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 public class Global {
 
@@ -13,7 +15,7 @@ public class Global {
 	
 	
 
-	private static List<TCThreadStateC> tcThreadsState; // = new ArrayList<String>();
+	private static Map<Long, TCThreadStateC> tcThreadsState; // = new ArrayList<String>();
 	//	private int[] tcThreads;
 	private boolean waitingSigTh = false;
 	private static Global me = null;
@@ -68,7 +70,7 @@ public class Global {
 		else{
 			System.err.println("WARNING: Libraries wasn't loaded. Use this mod is only for test/debug.");
 		}
-		tcThreadsState  = new ArrayList<TCThreadStateC>();
+		tcThreadsState  = new Hashtable<Long, TCThreadStateC>();
 		signals  = new ArrayList<SimVariable<?, ?>>();
 		register_time(new Time(0));
 		me = this;
@@ -121,7 +123,7 @@ public class Global {
 	}
 
 	private synchronized void _wakeTCThreads_(int on) {
-		for(TCThreadStateC tcth : tcThreadsState){
+		for(TCThreadStateC tcth : tcThreadsState.values()){
 			tcth.wakeIF(on);
 		}
 	}
@@ -141,13 +143,16 @@ public class Global {
 	}
 
 
-	synchronized static void registerTCThread(TCThread thread) {
+	static void registerTCThread(TCThread thread) {
 		me._registerTCThread_(thread);
 	}
 
 	synchronized void _registerTCThread_(TCThread thread) {
-		thread.setID(tcThreadsState.size());
-		tcThreadsState.add(new TCThreadStateC(ThreadState.Running, 0, thread));
+//		thread.setID(tcThreadsState.size());
+		tcThreadsState.put(thread.getId(), new TCThreadStateC(ThreadState.Running, 0, thread));
+		for (SimVariable<?, ?> signal : signals){
+			signal.registerTCThread(thread.getID());
+		}
 	}
 
 	public static void waitSim(int time, TCThread tcThread) {
@@ -189,6 +194,9 @@ public class Global {
 	}
 
 	static void register_time(Time time){
+		if( time.ID != 0){
+			throw new IllegalArgumentException("The id of the time must be '0'! The current id is:" + time.ID);
+		};
 		signals.add(0, time);
 		simTimeSignal = time;
 	}
@@ -202,12 +210,22 @@ public class Global {
 
 
 	static void stepTime(final int time) {
+		process_post_time();
 		assert(time == getTime()+1);
 		Global.get(0).set(time);
+
+		for (SimVariable<?, ?> signal : signals){
+			signal.step();
+		}
+	}
+
+	private static void process_post_time() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public static int getTime() {
-		return simTimeSignal.get();
+		return simTimeSignal._get_();
 	}
 
 	public static void create_time() {
@@ -230,8 +248,8 @@ public class Global {
 					Object testInst = cl.newInstance();
 					TCThread tct = (TCThread) testInst;
 					Global.registerTCThread(tct);
-					Thread th = new Thread(tct);
-					th.start();
+//					Thread th = new Thread(tct);
+					tct.start();
 				} catch (InstantiationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -247,7 +265,7 @@ public class Global {
 	}
 
 	public static void joinAllTCs() {
-		for(TCThreadStateC tc : tcThreadsState){
+		for(TCThreadStateC tc : tcThreadsState.values()){
 			try {
 				tc.tct.join();
 			} catch (InterruptedException e) {

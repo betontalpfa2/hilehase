@@ -1,14 +1,14 @@
 package hu.beton.hilihase.dut;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import hu.beton.hilihase.jfw.Global;
+import hu.beton.hilihase.jfw.NativeInterface;
+import hu.beton.hilihase.jfw.ValueE;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import hu.beton.hilihase.jfw.Global;
-import hu.beton.hilihase.jfw.NativeInterface;
-import hu.beton.hilihase.jfw.ValueE;
 
 public class FullDut implements Runnable{
 	List<String> signalNames = new ArrayList<String>();

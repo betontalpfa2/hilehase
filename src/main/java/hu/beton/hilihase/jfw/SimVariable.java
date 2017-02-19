@@ -1,11 +1,8 @@
 package hu.beton.hilihase.jfw;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract  class SimVariable<ValueType, EventType> implements ISimVariable<ValueType, EventType> {
 	/**
@@ -89,8 +86,14 @@ public abstract  class SimVariable<ValueType, EventType> implements ISimVariable
 //	}
 	
 	void step(){
-		activateEventCurrent.replaceAll((k, v) -> Boolean.TRUE);
-		getValueCurent.replaceAll((k, v) -> Boolean.FALSE);
+		for (Entry<Long, Boolean> entry : activateEventCurrent.entrySet()) {
+			entry.setValue(Boolean.TRUE);
+		}
+		for (Entry<Long, Boolean> entry : getValueCurent.entrySet()) {
+			entry.setValue(Boolean.FALSE);
+		}
+//		activateEventCurrent.replaceAll((k, v) -> Boolean.TRUE);
+//		getValueCurent.replaceAll((k, v) -> Boolean.FALSE);
 			
 //		Collections.fill(activateEventCurrent.values(), Boolean.TRUE);
 //		Collections.fill(getValueCurent.values(), Boolean.FALSE);

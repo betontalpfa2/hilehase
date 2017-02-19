@@ -138,7 +138,10 @@ public abstract  class SimVariable<ValueType, EventType> implements ISimVariable
 				activateEventCurrent.replace(l, false);
 				getValueCurent.replace(l, true);
 				if(amITheTime()){
-					activateEventCurrent.replaceAll((k, v) -> Boolean.TRUE);
+					for (Entry<Long, Boolean> entry : activateEventCurrent.entrySet()) {
+						entry.setValue(Boolean.TRUE);
+					}
+//					activateEventCurrent.replaceAll((k, v) -> Boolean.TRUE);
 //					Collections.fill(getValueCurent, true);
 				}				
 				return true;

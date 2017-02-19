@@ -15,7 +15,7 @@ public class QuestaBehav implements Runnable {
 	}
 	
 	
-	@Override
+//	@Override
 	public void run() {
 		Global.init(false);
 		Global.create_time();

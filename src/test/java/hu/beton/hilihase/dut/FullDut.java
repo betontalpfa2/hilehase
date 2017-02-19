@@ -24,7 +24,7 @@ public class FullDut implements Runnable{
 	}
 	
 	
-	@Override
+//	@Override
 	@Test
 	public void run() {
 		try{

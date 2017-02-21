@@ -52,7 +52,7 @@ public class Minimal extends TCThread {
 		clk = Global.get("clk");
 
 	    System.out.println("POS");
-		clk.WaitOn(SignalEvent.POSEDGE, this);
+		clk.WaitOn(SignalEvent.POSEDGE);
 		assertEquals("simtime at ", 5, Global.getTime());
 		assertEquals("set-get ", ValueE.HIGH, clk.get());
         
@@ -64,24 +64,24 @@ public class Minimal extends TCThread {
         assertEquals("set-get carryout", ValueE.LOW, carryout.get());
 		
         x.drive(ValueE.HIGH);
-		x.WaitOn(SignalEvent.POSEDGE, this);
+		x.WaitOn(SignalEvent.POSEDGE);
 
 		assertEquals("set-get x", ValueE.HIGH, x.get());
 		assertEquals("set-get y", ValueE.LOW, y.get());
 		assertEquals("set-get cin", ValueE.LOW, cin.get());
 
 	    System.out.println("NEG");
-		clk.WaitOn(SignalEvent.NEGEDGE, this);
+		clk.WaitOn(SignalEvent.NEGEDGE);
 		assertEquals("set-get out", ValueE.HIGH, out.get());
 		assertEquals("set-get carryout", ValueE.LOW, carryout.get());
 		assertEquals("simtime at ", 10, Global.getTime());
 		assertEquals("set-get clk", ValueE.LOW, clk.get());
         
         y.drive(ValueE.HIGH);
-		y.WaitOn(SignalEvent.POSEDGE, this);
+		y.WaitOn(SignalEvent.POSEDGE);
 
 	    System.out.println("POS");
-		clk.WaitOn(SignalEvent.POSEDGE, this);
+		clk.WaitOn(SignalEvent.POSEDGE);
 		assertEquals("set-get x", ValueE.HIGH, x.get());
         assertEquals("set-get y", ValueE.HIGH, y.get());
         assertEquals("set-get cin", ValueE.LOW, cin.get());

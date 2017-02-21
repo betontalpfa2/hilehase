@@ -11,7 +11,7 @@ public class SignalTest {
 	@Test
 	public void test_set_get() {
 		try{
-			Global.init(false);
+			Global.init(Mode.HDLSimStarts, false);
 
 			Signal sig1 = new Signal(0, "clock_signal", ValueE.HIGH);
 
@@ -28,7 +28,7 @@ public class SignalTest {
 	@Test
 	public void test_singleTC() {
 		try{
-			Global.init(false);
+			Global.init(Mode.HDLSimStarts, false);
 			final Signal sig1 = new Signal(0, "clock_signal", ValueE.HIGH);
 			final ValueE val = ValueE.HIGH;
 
@@ -63,9 +63,8 @@ public class SignalTest {
 	@Test
 	public void test_register() {
 		try{
-			Global.init(false);
-			SimVariable<?, ?> tim = new Time(0);
-			Global.register_time((Time)tim);
+			Global.init(Mode.HDLSimStarts, false);
+//			SimVariable<?, ?> tim = new Time(0);
 
 			final String name = "clock_signal";
 			Global.register_signal(1, name, ValueE.HIGH);
@@ -83,6 +82,7 @@ public class SignalTest {
 //					assertEquals("set-get", val, sig1.get());
 				}
 			};
+			Global.setupDone();
 			Global.registerTCThread(tct);
 
 			Thread th = new Thread(tct);

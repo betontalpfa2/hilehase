@@ -17,8 +17,7 @@ public class QuestaBehav implements Runnable {
 	
 //	@Override
 	public void run() {
-		Global.init(false);
-		Global.create_time();
+		Global.init(Mode.HDLSimStarts, false);
 		int id = 1;
 		for(String signalName : signalNames){
 			Global.register_signal(id, signalName, ValueE.LOW);

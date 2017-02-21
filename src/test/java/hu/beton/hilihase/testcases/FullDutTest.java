@@ -27,7 +27,7 @@ public class FullDutTest extends TCThread {
 		clk = Global.get("clk");
 		en = Global.get("en");
 		System.out.println("POS");
-		clk.WaitOn(SignalEvent.POSEDGE, this);
+		clk.WaitOn(SignalEvent.POSEDGE);
 		assertEquals("simtime", 2, Global.getTime());
 		assertEquals("set-get", ValueE.high, clk.get().toInteger());
 		

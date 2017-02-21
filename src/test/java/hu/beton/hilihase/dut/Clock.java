@@ -1,7 +1,6 @@
 package hu.beton.hilihase.dut;
 
 import static org.junit.Assert.assertEquals;
-import hu.beton.hilihase.jfw.Global;
 import hu.beton.hilihase.jfw.NativeInterface;
 import hu.beton.hilihase.jfw.ValueE;
 
@@ -33,7 +32,7 @@ public class Clock implements Runnable{
 		NativeInterface.hilihase_init_debug(1, signals);
 		
 //		Global.init(false);
-		Global.create_time();
+//		Global.create_time();
 //		int id = 1;
 		signals.add(0, null);
 		signals.add(1, ValueE.LOW);

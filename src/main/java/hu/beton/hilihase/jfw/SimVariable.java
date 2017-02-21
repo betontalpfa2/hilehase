@@ -92,17 +92,9 @@ public abstract  class SimVariable<ValueType, EventType> implements ISimVariable
 		for (Entry<Long, Boolean> entry : getValueCurent.entrySet()) {
 			entry.setValue(Boolean.FALSE);
 		}
-//		activateEventCurrent.replaceAll((k, v) -> Boolean.TRUE);
-//		getValueCurent.replaceAll((k, v) -> Boolean.FALSE);
-			
-//		Collections.fill(activateEventCurrent.values(), Boolean.TRUE);
-//		Collections.fill(getValueCurent.values(), Boolean.FALSE);
 	}
-	/*
-	public  synchronized ValueType get(int ) {
-		return _get_();
-	}
-	 */
+	
+
 	public void processWaitOn() {
 		synchronized (this) {
 			notifyAll();
@@ -151,8 +143,7 @@ public abstract  class SimVariable<ValueType, EventType> implements ISimVariable
 					for (Entry<Long, Boolean> entry : activateEventCurrent.entrySet()) {
 						entry.setValue(Boolean.TRUE);
 					}
-//					activateEventCurrent.replaceAll((k, v) -> Boolean.TRUE);
-//					Collections.fill(getValueCurent, true);
+
 				}				
 				return true;
 			}

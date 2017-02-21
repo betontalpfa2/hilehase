@@ -1,5 +1,7 @@
 package hu.beton.hilihase.jfw;
 
+import hu.beton.hilihase.util.Util;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -14,17 +16,18 @@ public class Global {
 	}
 	
 	
-
+	private static Mode mode;
 	private static Map<Long, TCThreadStateC> tcThreadsState; // = new ArrayList<String>();
 	//	private int[] tcThreads;
 	private boolean waitingSigTh = false;
 	private static Global me = null;
-	private static Time simTimeSignal;
+	private static Time simTimeSignal = null;
 	private static List<SimVariable<?, ?>> signals;
 	private static List<SignalDrv> signalDrvQueue;
 	int runningCount;
 	String testcasePath = null;
 	static boolean  loadLibraries = true;
+	private static Boolean setDone = Boolean.FALSE;
 
 	class TCThreadStateC{
 		ThreadState state;
@@ -61,7 +64,8 @@ public class Global {
 
 
 
-	Global(boolean loadlibraries) {
+	Global(Mode mode, boolean loadlibraries) {
+		Global.mode = mode;
 		Global.loadLibraries = loadlibraries;
 		if(loadlibraries){
 			System.out.println(System.getProperty("java.library.path"));
@@ -78,19 +82,22 @@ public class Global {
 		signalDrvQueue = Collections.synchronizedList(new ArrayList<SignalDrv>());
 	}
 
-	static void init(){
-		init(true);
+	static void init(Mode mode){
+		init(mode, true);
 	}
 	
-	static void init(boolean loadlibraries) {
+	static void init(Mode mode, boolean loadlibraries) {
 		if (null == me){
 //			Global.loadLibraries = loadlibraries;
-			new Global(loadlibraries);
+			new Global(mode, loadlibraries);
+		} else{
+			System.err.println("Multiple init is disabled...");
 		}
 	}
 
 	static void cleanup(){
 		me = null;
+		simTimeSignal = null;
 	}
 
 	public static void waitTCs() {
@@ -142,17 +149,26 @@ public class Global {
 		}
 	}
 
-
-	static void registerTCThread(TCThread thread) {
-		me._registerTCThread_(thread);
+	static void registerTCThread(TCThread thread, TCThread parent) {
+		me._registerTCThread_(thread, parent);
 	}
 
-	synchronized void _registerTCThread_(TCThread thread) {
+
+	static void registerTCThread(TCThread thread) {
+		me._registerTCThread_(thread, null);
+	}
+
+	synchronized void _registerTCThread_(TCThread thread, TCThread parent) {
 //		thread.setID(tcThreadsState.size());
+		if(null == parent){
+			Util.assertUtil(0 == tcThreadsState.size());
+		}
 		tcThreadsState.put(thread.getId(), new TCThreadStateC(ThreadState.Running, 0, thread));
 		for (SimVariable<?, ?> signal : signals){
 			signal.registerTCThread(thread.getID());
 		}
+		
+		thread.setParent(parent);
 	}
 
 	public static void waitSim(int time) {
@@ -194,13 +210,21 @@ public class Global {
 	}
 
 	static void register_signal(int id, String name, ValueE val){
-		signals.add(id, new Signal(id, name, val));
+		Signal sig = new Signal(id, name, val);
+		for(Long k: tcThreadsState.keySet()){
+			sig.registerTCThread(k);
+		}
+		signals.add(id, sig);
+		
 	}
 
 	static void register_time(Time time){
+		if(null != simTimeSignal){
+			throw new IllegalArgumentException("Only one time variable supported!");
+		}
 		if( time.ID != 0){
 			throw new IllegalArgumentException("The id of the time must be '0'! The current id is:" + time.ID);
-		};
+		}
 		signals.add(0, time);
 		simTimeSignal = time;
 	}
@@ -237,6 +261,11 @@ public class Global {
 	}
 
 	protected static void startTC(String tcName) {
+		if(mode.equals(Mode.JUnitTest)){
+			System.err.println("Testcase starting is not allowed during Junittest mode!");
+			setupDone();
+			return;
+		}
 		List<Class<?>> classes = ClassFinder.find("hu.beton.hilihase.testcases");
         try{
 			System.out.println("Finding testclass: " + tcName);
@@ -261,6 +290,7 @@ public class Global {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				setupDone();
 				return;
 			}
 		}
@@ -300,5 +330,34 @@ public class Global {
 		}
 	}
 
+	public static void startHDLSim(String toplevelName) {
+		if(loadLibraries){
+			NativeInterface.startHDLSim(toplevelName);
+		}
+		else{
+			// test
+			NativeInterface.startHDLSim_debug(toplevelName);
+		}
+	}
+
+	public static void waitsetup() {
+		synchronized (setDone) {
+			while(!setDone){
+				try {
+					setDone.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public static void setupDone() {
+		synchronized (setDone) {
+			setDone.notifyAll();
+			setDone= true;
+		}
+	}
 
 }

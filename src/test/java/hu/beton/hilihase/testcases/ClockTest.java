@@ -1,5 +1,8 @@
 package hu.beton.hilihase.testcases;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import hu.beton.hilihase.jfw.Global;
 import hu.beton.hilihase.jfw.Signal;
 import hu.beton.hilihase.jfw.TCThread;
@@ -30,12 +33,20 @@ public class ClockTest extends TCThread {
 			
 			clk.drive(ValueE.LOW);
 			
-			waitSim(5);
+			waitSim(1);
+			assertEquals("TestClock", ValueE.LOW, clk.get());
+			
+			waitSim(4);
 			
 			clk.drive(ValueE.HIGH);
 			
 			System.out.println("TC: FIN at " + Global.getTime());		
 
+		}
+		
+		@Test
+		public void testMe(){
+			Me("full_adder_tb");
 		}
 
 }

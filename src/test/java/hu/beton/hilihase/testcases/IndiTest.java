@@ -15,7 +15,7 @@ public class IndiTest extends TCThread {
 		Signal sig1;
 		sig1 = Global.get("clock_sig");
 		System.out.println("POS");
-		sig1.WaitOn(SignalEvent.POSEDGE, this);
+		sig1.WaitOn(SignalEvent.POSEDGE);
 		assertEquals("simtime", 5, Global.getTime());
 		assertEquals("set-get", ValueE.HIGH, sig1.get());
 		System.out.println("TC: FIN");		

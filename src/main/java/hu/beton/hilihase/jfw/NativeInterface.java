@@ -1,5 +1,7 @@
 package hu.beton.hilihase.jfw;
 
+import hu.beton.hilihase.dut.Clock;
+
 import java.util.List;
 
 public class NativeInterface implements IBase
@@ -67,7 +69,7 @@ public class NativeInterface implements IBase
 		try{
 			System.out.println("Initialize JAVA (myself)");
 //			Base.initBase();
-			Global.init(debugLevel<1);
+			Global.init(Mode.HDLSimStarts, debugLevel<1);
 			System.out.println("[  OK  ]$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 		} catch (Exception ex){
 			handleUnhandled(ex);
@@ -131,6 +133,16 @@ public class NativeInterface implements IBase
 		return 0;
 	}
 
+	public static void startHDLSim(String toplevelName) {
+		hilihase_start_HDL_sim(toplevelName);
+	}
 
+	public native static int hilihase_start_HDL_sim(String toplevelName);
+
+	public static void startHDLSim_debug(String toplevelName) {
+		Clock clk = new Clock();
+		Thread th = new Thread(clk);
+		th.start();
+	}
 
 }

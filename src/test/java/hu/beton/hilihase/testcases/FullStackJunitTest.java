@@ -40,6 +40,6 @@ public class FullStackJunitTest extends TCThread {
 	
 	@Test
 	public void testMe(){
-		Me("full_adder_tb");
+		startHDLSim("full_adder_tb", true);
 	}
 }

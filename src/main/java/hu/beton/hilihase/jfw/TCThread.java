@@ -77,8 +77,8 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 	
 	
 
-	public void Me(String toplevelName) {
-		Global.init(Mode.JUnitTest, false);		//TODO
+	public void startHDLSim(String toplevelName, boolean loadLibraries) {
+		Global.init(Mode.JUnitTest, loadLibraries);		//TODO
 //		setParent(null);
 		Global.registerTCThread(this, this);
 //		start();

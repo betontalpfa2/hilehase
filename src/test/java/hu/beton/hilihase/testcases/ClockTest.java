@@ -10,44 +10,48 @@ import hu.beton.hilihase.jfw.ValueE;
 
 public class ClockTest extends TCThread {
 
-		@Override
-		public void test() {
-			System.out.println("TEST RUNNING!!!");
-			Signal clk;
-			clk = Global.get("clk");
+	public ClockTest() {
+		super();
+	}
+	
+	@Override
+	public void test() {
+		System.out.println("TEST RUNNING!!!");
+		Signal clk;
+		clk = Global.get("clk");
 
-			System.out.println("ClockTEST: wait 5 ...");
-//			Global.waitSim(5, this);
-			
-			clk.drive(ValueE.HIGH);
-			
-			waitSim(5);
-			
-			clk.drive(ValueE.LOW);
-			
-			waitSim(5);
-			
-			clk.drive(ValueE.HIGH);
-			
-			waitSim(5);
-			
-			clk.drive(ValueE.LOW);
-			
-			waitSim(1);
-			assertEquals("TestClock", ValueE.LOW, clk.get());
-			
-			waitSim(4);
-			
-			clk.drive(ValueE.HIGH);
-			
-			System.out.println("TC: FIN at " + Global.getTime());		
+		System.out.println("ClockTEST: wait 5 ...");
+		//			Global.waitSim(5, this);
 
-		}
-		
-		@Test
-		public void testMe(){
-			Me("full_adder_tb");
-		}
+		clk.drive(ValueE.HIGH);
+
+		waitSim(5);
+
+		clk.drive(ValueE.LOW);
+
+		waitSim(5);
+
+		clk.drive(ValueE.HIGH);
+
+		waitSim(5);
+
+		clk.drive(ValueE.LOW);
+
+		waitSim(1);
+		assertEquals("TestClock", ValueE.LOW, clk.get());
+
+		waitSim(4);
+
+		clk.drive(ValueE.HIGH);
+
+		System.out.println("TC: FIN at " + Global.getTime());		
+
+	}
+
+	@Test
+	public void testMe(){
+		Me("full_adder_tb");
+	}
 
 }
 

@@ -92,6 +92,7 @@ public class NativeInterface implements IBase
 		try{
 			System.out.println("Destroy Base...");
 			Base.destroyBase();
+			Global.cleanup();
 			System.out.println("Destroing Base finished");
 		} catch (Exception ex){
 			handleUnhandled(ex);
@@ -143,6 +144,12 @@ public class NativeInterface implements IBase
 		Clock clk = new Clock();
 		Thread th = new Thread(clk);
 		th.start();
+		try {
+			th.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

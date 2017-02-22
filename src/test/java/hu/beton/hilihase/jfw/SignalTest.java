@@ -82,7 +82,7 @@ public class SignalTest {
 //					assertEquals("set-get", val, sig1.get());
 				}
 			};
-			Global.setupDone();
+//			Global.setupDone();
 			Global.registerTCThread(tct);
 
 			Thread th = new Thread(tct);

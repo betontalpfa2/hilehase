@@ -7,8 +7,6 @@ import hu.beton.hilihase.jfw.ValueE;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
 public class Clock implements Runnable{
 	List<String> signalNames = new ArrayList<String>();
 	int localTime = 0;
@@ -26,7 +24,6 @@ public class Clock implements Runnable{
 	
 	
 //	@Override
-	@Test
 	public void run() {
 		try{
 		NativeInterface.hilihase_init_debug(1, signals);

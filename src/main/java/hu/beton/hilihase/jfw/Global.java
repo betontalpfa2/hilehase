@@ -17,7 +17,7 @@ public class Global {
 	
 	
 	private static Mode mode;
-	private static Map<Long, TCThreadStateC> tcThreadsState; // = new ArrayList<String>();
+	private static Map<Long, TCThreadInfo> tcThreadsState; // = new ArrayList<String>();
 	//	private int[] tcThreads;
 	private boolean waitingSigTh = false;
 	private static Global me = null;
@@ -27,15 +27,16 @@ public class Global {
 	int runningCount;
 	String testcasePath = null;
 	static boolean  loadLibraries = true;
-	private static Boolean setDone = Boolean.FALSE;
+//	private static Boolean setDone = Boolean.FALSE;
 
-	class TCThreadStateC{
+	class TCThreadInfo{
+//		TCThread tct;
 		ThreadState state;
 		int waitOn;// Negative means a stopped thread or error
 		//		static int runningCount;
 		final TCThread tct;
 
-		TCThreadStateC(ThreadState state, int waitOn, TCThread tct){
+		TCThreadInfo(ThreadState state, int waitOn, TCThread tct){
 			set(state, waitOn);
 			this.tct = tct;
 		}
@@ -74,7 +75,7 @@ public class Global {
 		else{
 			System.err.println("WARNING: Libraries wasn't loaded. Use this mod is only for test/debug.");
 		}
-		tcThreadsState  = new Hashtable<Long, TCThreadStateC>();
+		tcThreadsState  = new Hashtable<Long, TCThreadInfo>();
 		signals  = new ArrayList<SimVariable<?, ?>>();
 		register_time(new Time(0));
 		me = this;
@@ -130,7 +131,7 @@ public class Global {
 	}
 
 	private synchronized void _wakeTCThreads_(int on) {
-		for(TCThreadStateC tcth : tcThreadsState.values()){
+		for(TCThreadInfo tcth : tcThreadsState.values()){
 			tcth.wakeIF(on);
 		}
 	}
@@ -163,7 +164,7 @@ public class Global {
 		if(null == parent){
 			Util.assertUtil(0 == tcThreadsState.size());
 		}
-		tcThreadsState.put(thread.getId(), new TCThreadStateC(ThreadState.Running, 0, thread));
+		tcThreadsState.put(thread.getId(), new TCThreadInfo(ThreadState.Running, 0, thread));
 		for (SimVariable<?, ?> signal : signals){
 			signal.registerTCThread(thread.getID());
 		}
@@ -262,10 +263,28 @@ public class Global {
 
 	protected static void startTC(String tcName) {
 		if(mode.equals(Mode.JUnitTest)){
-			System.err.println("Testcase starting is not allowed during Junittest mode!");
-			setupDone();
+			TCThread tct = getMainTct();
+			System.err.println("Testcase has overriden (Junittest mode) " + tct.getName() + " will startwd instead of " + tcName);
+			tct.start();
+//			setupDone();
 			return;
 		}
+		TCThread tct = findTc(tcName);
+		Global.registerTCThread(tct);
+		tct.start();
+//		setupDone();
+		return;		
+	}
+
+	private static TCThread getMainTct() {
+//		tcThreadsState.entrySet().iterator().
+//		for(TCThreadInfo tctinfo : tcThreadsState.values()){
+//			tctinfo.tct.getParent();
+//		}
+		return tcThreadsState.entrySet().iterator().next().getValue().tct;
+	}
+
+	private static TCThread findTc(String tcName) {
 		List<Class<?>> classes = ClassFinder.find("hu.beton.hilihase.testcases");
         try{
 			System.out.println("Finding testclass: " + tcName);
@@ -279,10 +298,9 @@ public class Global {
 				System.out.println("Class math: " + cl.getName() + " instatniating...");
 				try {
 					Object testInst = cl.newInstance();
-					TCThread tct = (TCThread) testInst;
-					Global.registerTCThread(tct);
-//					Thread th = new Thread(tct);
-					tct.start();
+					return (TCThread) testInst;
+//					Global.registerTCThread(tct);
+//					tct.start();
 				} catch (InstantiationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -290,16 +308,13 @@ public class Global {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				setupDone();
-				return;
 			}
 		}
 		throw new IllegalArgumentException("No testcase found with the following name: " + tcName);
-
 	}
 
 	public static void joinAllTCs() {
-		for(TCThreadStateC tc : tcThreadsState.values()){
+		for(TCThreadInfo tc : tcThreadsState.values()){
 			try {
 				tc.tct.join();
 			} catch (InterruptedException e) {
@@ -340,7 +355,7 @@ public class Global {
 		}
 	}
 
-	public static void waitsetup() {
+	/*public static void waitsetup() {
 		synchronized (setDone) {
 			while(!setDone){
 				try {
@@ -351,13 +366,13 @@ public class Global {
 				}
 			}
 		}
-	}
+	}*/
 
-	public static void setupDone() {
+	/*public static void setupDone() {
 		synchronized (setDone) {
 			setDone.notifyAll();
 			setDone= true;
 		}
-	}
+	}*/
 
 }

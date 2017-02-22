@@ -15,6 +15,10 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 	
 	private boolean parentFlag = false;
 
+	public TCThread() {
+		setName(getClass().getName());
+	}
+	
 	public void waitSim(int time){
 		Global.waitSim(time);
 	}
@@ -27,7 +31,7 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 			throw new AssertionError("Parent flag!!!");
 		}
 		try{
-			Global.waitsetup();
+//			Global.waitsetup();
 			test();
 		} catch (AssertionError ex){
 			handler.handle(ex);
@@ -75,7 +79,7 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 		Global.init(Mode.JUnitTest, false);		//TODO
 //		setParent(null);
 		Global.registerTCThread(this, this);
-		start();
+//		start();
 		Global.startHDLSim(toplevelName);
 		try {
 			join();
@@ -85,6 +89,10 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 		}
 		analize();
 //		run();
+	}
+
+	public IJunitHandler getParent() {
+		return handler;
 	}
 
 	

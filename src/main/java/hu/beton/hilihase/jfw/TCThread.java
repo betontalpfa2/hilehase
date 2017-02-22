@@ -69,6 +69,8 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 		parentFlag = true;
 		if(null == handler || this ==handler){
 			errors = Collections.synchronizedList(new ArrayList<AssertionError>());
+			this.handler = this;
+			return;
 		}
 		this.handler = handler;
 	}

@@ -15,5 +15,5 @@ import org.junit.runners.Suite;
 	NativeInterfaceTest.class
 })
 
-public class TestSuite {   
+public class VirtualTestSuite {   
 }  	

@@ -43,21 +43,18 @@ public class Maximal extends TCThread {
 	@Override
 	public void test() {
 		System.out.println("Maximal TEST RUNNING!!!");
-		Signal x, y, cin, out, carryout, clk;
+		Signal x, y, cin, out, carryout;
 		x = Global.get("top_x");
 		y = Global.get("top_y");
 		cin = Global.get("top_cin");
 		out = Global.get("out");
 		carryout = Global.get("carryout");
-		// clk = Global.get("clk");
 
 	    System.out.println("Wait on time ...");
         Global.waitSim(5);
 	    System.out.println("wait OK");
 		// clk.WaitOn(SignalEvent.POSEDGE, this);
 		assertEquals("simtime at ", 5, Global.getTime());
-        // x.drive(ValueE.HIGH);
-		// assertEquals("set-get ", ValueE.HIGH, clk.get());
         
         
 		assertEquals("set-get x", ValueE.LOW, x.get());
@@ -67,7 +64,7 @@ public class Maximal extends TCThread {
         assertEquals("set-get carryout", ValueE.LOW, carryout.get());
 		
         x.drive(ValueE.HIGH);
-		x.WaitOn(SignalEvent.POSEDGE, this);
+		x.WaitOn(SignalEvent.POSEDGE);
 
 		assertEquals("set-get x", ValueE.HIGH, x.get());
 		assertEquals("set-get y", ValueE.LOW, y.get());
@@ -81,7 +78,7 @@ public class Maximal extends TCThread {
 		// assertEquals("set-get clk", ValueE.LOW, clk.get());
         
         y.drive(ValueE.HIGH);
-		y.WaitOn(SignalEvent.POSEDGE, this);
+		y.WaitOn(SignalEvent.POSEDGE);
 
 	    System.out.println("POS");
 		waitSim(1);

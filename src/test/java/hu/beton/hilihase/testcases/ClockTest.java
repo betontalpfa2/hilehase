@@ -50,7 +50,7 @@ public class ClockTest extends TCThread {
 
 	@Test
 	public void testMe(){
-		Me("full_adder_tb");
+		Me("Clock");
 	}
 
 }

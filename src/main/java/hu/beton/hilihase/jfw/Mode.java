@@ -21,11 +21,16 @@ public class Mode {
 	 * Unit test starts the test-cases which initialise the Global and starts
 	 * the HDL simulator
 	 */
-	public static final Mode JUnitTest = new Mode(1);
+	public static final Mode JUnitTestVirtual = new Mode(1);
 	
 	/**
 	 * The HDL simulator starts (by command line) and creates the Java virtual
 	 * machine and starts the testcase. 
 	 */
 	public static final Mode HDLSimStarts = new Mode(2);
+	
+	/**
+	 * New structre of JUnit test.
+	 */
+	public static final Mode JUnitTest2 = new Mode(3);
 }

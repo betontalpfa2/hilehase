@@ -14,8 +14,8 @@ public class Global {
 		Running,
 		Wait
 	}
-	
-	
+
+
 	private static Mode mode;
 	private static Map<Long, TCThreadInfo> tcThreadsState; // = new ArrayList<String>();
 	//	private int[] tcThreads;
@@ -27,7 +27,7 @@ public class Global {
 	int runningCount;
 	String testcasePath = null;
 	static boolean  loadLibraries = true;
-//	private static Boolean setDone = Boolean.FALSE;
+	//	private static Boolean setDone = Boolean.FALSE;
 	private static int succesFinish = 0;
 
 	class TCThreadInfo{
@@ -86,10 +86,10 @@ public class Global {
 	static void init(Mode mode){
 		init(mode, true);
 	}
-	
+
 	static void init(Mode mode, boolean loadlibraries) {
 		if (null == me){
-//			Global.loadLibraries = loadlibraries;
+			//			Global.loadLibraries = loadlibraries;
 			new Global(mode, loadlibraries);
 		} else{
 			System.err.println("Multiple init is disabled...");
@@ -162,7 +162,7 @@ public class Global {
 	}
 
 	synchronized void _registerTCThread_(TCThread thread, TCThread parent) {
-//		thread.setID(tcThreadsState.size());
+		//		thread.setID(tcThreadsState.size());
 		if(null == parent){
 			Util.assertUtil(0 == tcThreadsState.size());
 		}
@@ -170,14 +170,14 @@ public class Global {
 		for (SimVariable<?, ?> signal : signals){
 			signal.registerTCThread(thread.getID());
 		}
-		
+
 		thread.setParent(parent);
 	}
 
 	public static void waitSim(int time) {
 		waitSimUntil(time + getTime());
 	}
-	
+
 	public static void waitSimUntil(int time) {
 		simTimeSignal.waitSim(time);
 	}
@@ -218,7 +218,7 @@ public class Global {
 			sig.registerTCThread(k);
 		}
 		signals.add(id, sig);
-		
+
 	}
 
 	static void register_time(Time time){
@@ -251,7 +251,7 @@ public class Global {
 
 	private static void process_post_time() {	// TODO
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public static int getTime() {
@@ -263,21 +263,27 @@ public class Global {
 	}
 
 	protected static void startTC(String tcName) {
-		if(mode.equals(Mode.JUnitTest)){
+		if(mode.equals(Mode.JUnitTestVirtual)){
 			TCThread tct = getMainTct();
 			System.err.println("Testcase has overriden (Junittest mode) " + tct.getName() + " will startwd instead of " + tcName);
 			tct.start();
 			return;
 		}
-	    /*Result result = JUnitCore.runClasses(MyClassTest.class);
-	    for (Failure failure : result.getFailures()) {
-	      System.out.println(failure.toString());
-			*/
-		Class<? extends TCThread> tctc = findTc(tcName);
-		TCThread tct = instanceTc(tctc);
-		Global.registerTCThread(tct);
-		tct.start();
-		return;		
+		if(mode.equals(Mode.HDLSimStarts)){
+			Class<? extends TCThread> tctc = findTc(tcName);
+			TCThread tct = instanceTc(tctc);
+			Global.registerTCThread(tct);
+			tct.start();
+			return;
+		}
+		if(mode.equals(Mode.JUnitTest2)){
+			Class<? extends TCThread> tctc = findTc(tcName);
+			new JUnitRunner().startTest(tctc);
+//			TCThread tct = instanceTc(tctc);
+//			Global.registerTCThread(tct);
+//			tct.start();
+			return;
+		}
 	}
 
 	private static TCThread getMainTct() {	//TODO
@@ -286,40 +292,40 @@ public class Global {
 
 	private static Class<? extends TCThread> findTc(String tcName) {
 		List<Class<?>> classes = ClassFinder.find("hu.beton.hilihase.testcases");
-        try{
+		try{
 			System.out.println("Finding testclass: " + tcName);
-        } catch(NullPointerException ex){
+		} catch(NullPointerException ex){
 			System.out.println("The name of the testcase is null!!! Please specify a valid testcase name");
-            throw ex;
-        }
+			throw ex;
+		}
 		for(Class<?> cl : classes){
 			System.out.println("Classname: " + cl.getName());
 			if(cl.getName().endsWith(tcName)){
 				System.out.println("Class math: " + cl.getName() + " instatniating...");
-//				try {
-					Class<? extends TCThread> tcclass =   cl.asSubclass(TCThread.class);
-					return tcclass;
-					/*if (cl.getClass().equals( TCThread.class)){
+				//				try {
+				Class<? extends TCThread> tcclass =   cl.asSubclass(TCThread.class);
+				return tcclass;
+				/*if (cl.getClass().equals( TCThread.class)){
 						Class<? extends TCThread> tcclass =  (Class<? extends TCThread>) cl.asSubclass(TCThread.class);
 					}
 					if ( Arrays.asList( cl.getClasses()).contains(TCThread.class)){
 						Class<TCThread> tcclass = (Class<TCThread>) cl;
 					}*/
-					
-//					TCThread testInst = tcclass.newInstance();
-//					return testInst;
-//				} catch (InstantiationException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (IllegalAccessException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+
+				//					TCThread testInst = tcclass.newInstance();
+				//					return testInst;
+				//				} catch (InstantiationException e) {
+				//					// TODO Auto-generated catch block
+				//					e.printStackTrace();
+				//				} catch (IllegalAccessException e) {
+				//					// TODO Auto-generated catch block
+				//					e.printStackTrace();
+				//				}
 			}
 		}
 		throw new IllegalArgumentException("No testcase found with the following name: " + tcName);
 	}
-	
+
 
 	private static TCThread instanceTc(Class<? extends TCThread> tcClass) {
 		try {
@@ -348,14 +354,14 @@ public class Global {
 	public static void addDriveList(int iD, int val) {
 		signalDrvQueue.add(new SignalDrv(iD, val));
 	}
-	
+
 	protected static void processDriveList() {
 		while(true){
 			try{
 				SignalDrv sdrv = signalDrvQueue.remove(0);
 				if(loadLibraries){
 					NativeInterface.hilihase_drve(sdrv.ID, (byte) sdrv.val);
-					}
+				}
 				else{
 					// test
 					NativeInterface.hilihase_drve_debug(sdrv.ID, (byte) sdrv.val);

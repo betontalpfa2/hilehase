@@ -52,6 +52,12 @@ public class ClockTest extends TCThread {
 	public void testMe(){
 		startHDLSim("Clock", false);
 	}
+	
+//	@Test
+	public void testMe2(){
+		startJUnitTest();
+	}
+
 
 }
 

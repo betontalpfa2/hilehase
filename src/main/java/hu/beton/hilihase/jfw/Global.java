@@ -28,9 +28,9 @@ public class Global {
 	String testcasePath = null;
 	static boolean  loadLibraries = true;
 //	private static Boolean setDone = Boolean.FALSE;
+	private static int succesFinish = 0;
 
 	class TCThreadInfo{
-//		TCThread tct;
 		ThreadState state;
 		int waitOn;// Negative means a stopped thread or error
 		//		static int runningCount;
@@ -97,8 +97,10 @@ public class Global {
 	}
 
 	static void cleanup(){
+		joinAllTCs();
 		me = null;
 		simTimeSignal = null;
+		succesFinish = 0;
 	}
 
 	public static void waitTCs() {
@@ -240,7 +242,6 @@ public class Global {
 
 	static void stepTime(final int time) {
 		process_post_time();
-//		assert(time == getTime()+1);
 		Global.get(0).set(time);
 
 		for (SimVariable<?, ?> signal : signals){
@@ -248,7 +249,7 @@ public class Global {
 		}
 	}
 
-	private static void process_post_time() {
+	private static void process_post_time() {	// TODO
 		// TODO Auto-generated method stub
 		
 	}
@@ -266,25 +267,24 @@ public class Global {
 			TCThread tct = getMainTct();
 			System.err.println("Testcase has overriden (Junittest mode) " + tct.getName() + " will startwd instead of " + tcName);
 			tct.start();
-//			setupDone();
 			return;
 		}
-		TCThread tct = findTc(tcName);
+	    /*Result result = JUnitCore.runClasses(MyClassTest.class);
+	    for (Failure failure : result.getFailures()) {
+	      System.out.println(failure.toString());
+			*/
+		Class<? extends TCThread> tctc = findTc(tcName);
+		TCThread tct = instanceTc(tctc);
 		Global.registerTCThread(tct);
 		tct.start();
-//		setupDone();
 		return;		
 	}
 
-	private static TCThread getMainTct() {
-//		tcThreadsState.entrySet().iterator().
-//		for(TCThreadInfo tctinfo : tcThreadsState.values()){
-//			tctinfo.tct.getParent();
-//		}
+	private static TCThread getMainTct() {	//TODO
 		return tcThreadsState.entrySet().iterator().next().getValue().tct;
 	}
 
-	private static TCThread findTc(String tcName) {
+	private static Class<? extends TCThread> findTc(String tcName) {
 		List<Class<?>> classes = ClassFinder.find("hu.beton.hilihase.testcases");
         try{
 			System.out.println("Finding testclass: " + tcName);
@@ -296,21 +296,42 @@ public class Global {
 			System.out.println("Classname: " + cl.getName());
 			if(cl.getName().endsWith(tcName)){
 				System.out.println("Class math: " + cl.getName() + " instatniating...");
-				try {
-					Object testInst = cl.newInstance();
-					return (TCThread) testInst;
-//					Global.registerTCThread(tct);
-//					tct.start();
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				try {
+					Class<? extends TCThread> tcclass =   cl.asSubclass(TCThread.class);
+					return tcclass;
+					/*if (cl.getClass().equals( TCThread.class)){
+						Class<? extends TCThread> tcclass =  (Class<? extends TCThread>) cl.asSubclass(TCThread.class);
+					}
+					if ( Arrays.asList( cl.getClasses()).contains(TCThread.class)){
+						Class<TCThread> tcclass = (Class<TCThread>) cl;
+					}*/
+					
+//					TCThread testInst = tcclass.newInstance();
+//					return testInst;
+//				} catch (InstantiationException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IllegalAccessException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 		}
 		throw new IllegalArgumentException("No testcase found with the following name: " + tcName);
+	}
+	
+
+	private static TCThread instanceTc(Class<? extends TCThread> tcClass) {
+		try {
+			return tcClass.newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static void joinAllTCs() {
@@ -355,24 +376,16 @@ public class Global {
 		}
 	}
 
-	/*public static void waitsetup() {
-		synchronized (setDone) {
-			while(!setDone){
-				try {
-					setDone.wait();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}*/
+	public synchronized static void succesFinish(TCThread tcThread) {
+		succesFinish++;
+	}
 
-	/*public static void setupDone() {
-		synchronized (setDone) {
-			setDone.notifyAll();
-			setDone= true;
-		}
-	}*/
+	public static int getSuccesFinished() {
+		return succesFinish;
+	}
+
+	public static int getThreadCount() {
+		return tcThreadsState.size();
+	}
 
 }

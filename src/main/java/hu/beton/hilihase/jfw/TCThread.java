@@ -37,7 +37,12 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 			handler.handle(ex);
 		}
 		Global.tcThreadToSleep(getID(), -1);
+		finished();
 //		analize();
+	}
+
+	private void finished() {
+		Global.succesFinish(this);
 	}
 
 	private void analize() {
@@ -50,6 +55,9 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 				throw err;
 			}
 		}
+		/*if(Global.getSuccesFinished() != Global.getThreadCount()){
+			throw new AssertionError("Some threads hasnot finished correctly...");
+		}*/
 	}
 
 	long getID() {

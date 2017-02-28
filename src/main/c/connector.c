@@ -134,6 +134,7 @@ int  hilihase_init ( int mode, const char* argv ){
         // strcat(path, ".");
     // }
     strcat(path, ":./test-classes");
+    strcat(path, ":/usr/share/java/junit4.jar");
     
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd)) != NULL)

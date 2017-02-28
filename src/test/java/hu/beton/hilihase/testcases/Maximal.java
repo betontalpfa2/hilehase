@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  *
  */
 public class Maximal extends TCThread {
-
+/*
 	static public void assertEquals(String message, Object expected, Object actual) {
 //		message += ((Signal)actual).
 	    if (expected == null && actual == null) {
@@ -41,7 +41,7 @@ public class Maximal extends TCThread {
     	System.err.println("ERROR: Maximal: " + message + " exp: " +  expected + " actual: " +  actual);
 //	    failNotEquals(message, expected, actual);
 	}
-	
+*/
 	@Override
 	public void test() {
 		System.out.println("Maximal TEST RUNNING!!!");

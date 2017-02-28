@@ -66,7 +66,7 @@ public class NativeInterface implements IBase
 	 * @return
 	 */
 	public static int hilihase_init(int debugLevel){
-		return hilihase_init(Mode.HDLSimStarts.val, debugLevel);
+		return hilihase_init(Mode.JUnitTest3.val, debugLevel);
 	}
 	
 	/**

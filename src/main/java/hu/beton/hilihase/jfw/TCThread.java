@@ -1,6 +1,5 @@
 package hu.beton.hilihase.jfw;
 
-import hu.beton.hilihase.rmi.Client;
 import hu.beton.hilihase.rmi.Server;
 
 import java.util.ArrayList;

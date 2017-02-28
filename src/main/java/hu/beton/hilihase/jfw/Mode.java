@@ -6,7 +6,7 @@ package hu.beton.hilihase.jfw;
  */
 public class Mode {
 
-	private int val;
+	public final int val;
 			
 	Mode(int v){
 		val = v;
@@ -33,4 +33,6 @@ public class Mode {
 	 * New structre of JUnit test.
 	 */
 	public static final Mode JUnitTest2 = new Mode(3);
+
+	public static final Mode JUnitTest3 = new Mode(4);
 }

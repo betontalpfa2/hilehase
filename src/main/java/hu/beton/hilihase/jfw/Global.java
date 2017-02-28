@@ -1,5 +1,6 @@
 package hu.beton.hilihase.jfw;
 
+import hu.beton.hilihase.rmi.Client;
 import hu.beton.hilihase.util.Util;
 
 import java.io.File;
@@ -286,6 +287,14 @@ public class Global {
 //			TCThread tct = instanceTc(tctc);
 //			Global.registerTCThread(tct);
 //			tct.start();
+			return;
+		}
+		if(mode.equals(Mode.JUnitTest3)){
+			Class<? extends TCThread> tctc = findTc(tcName);
+			TCThread tct = instanceTc(tctc);
+			Client cl = new Client();
+			Global.registerTCThread(tct, cl);
+			tct.start();
 			return;
 		}
 	}

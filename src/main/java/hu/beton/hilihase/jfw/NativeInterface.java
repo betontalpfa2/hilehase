@@ -66,10 +66,19 @@ public class NativeInterface implements IBase
 	 * @return
 	 */
 	public static int hilihase_init(int debugLevel){
+		return hilihase_init(Mode.HDLSimStarts.val, debugLevel);
+	}
+	
+	/**
+	 * 
+	 * @param debugLevel : set 0 for normal operation
+	 * @return
+	 */
+	public static int hilihase_init(int mode, int debugLevel){
 		try{
 			System.out.println("Initialize JAVA (myself)");
 			//			Base.initBase();
-			Global.init(Mode.HDLSimStarts, debugLevel<1);
+			Global.init(new Mode(mode), debugLevel<1);
 			System.out.println("[  OK  ]$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 		} catch (Exception ex){
 			handleUnhandled(ex);
@@ -77,7 +86,6 @@ public class NativeInterface implements IBase
 		}
 		return 0;
 	}
-
 	/**
 	 * 
 	 * @param debugLevel : set 0 for normal operation

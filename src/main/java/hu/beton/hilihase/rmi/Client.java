@@ -11,7 +11,7 @@ public class Client implements IJunitHandler {
 		try{
 
 			IJUnitRMI stub=(IJUnitRMI)Naming.lookup("rmi://localhost:2001/hilehase");
-			stub.handle(err);
+			stub.handleRemote(err);
 
 		}catch(Exception e){
 			e.printStackTrace();

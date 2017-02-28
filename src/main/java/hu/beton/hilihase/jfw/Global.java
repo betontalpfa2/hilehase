@@ -152,7 +152,7 @@ public class Global {
 		}
 	}
 
-	static void registerTCThread(TCThread thread, TCThread parent) {
+	static void registerTCThread(TCThread thread, IJunitHandler parent) {
 		me._registerTCThread_(thread, parent);
 	}
 
@@ -161,7 +161,7 @@ public class Global {
 		me._registerTCThread_(thread, null);
 	}
 
-	synchronized void _registerTCThread_(TCThread thread, TCThread parent) {
+	synchronized void _registerTCThread_(TCThread thread, IJunitHandler parent) {
 		//		thread.setID(tcThreadsState.size());
 		if(null == parent){
 			Util.assertUtil(0 == tcThreadsState.size());

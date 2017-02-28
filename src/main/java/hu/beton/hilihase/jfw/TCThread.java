@@ -1,5 +1,8 @@
 package hu.beton.hilihase.jfw;
 
+import hu.beton.hilihase.rmi.Client;
+import hu.beton.hilihase.rmi.Server;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -106,12 +109,21 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 		return handler;
 	}
 
-	public void startJUnitTest() {
+	public void startJUnitTest(String toplevelName) {
+		Server server = new Server(this);
+		server.startServer();
+		
+		
+		
+		
 		Global.init(Mode.JUnitTest2, true);		//TODO
+		
+		
+		
 //		setParent(null);
-		Global.registerTCThread(this, this);
-		start();
-//		Global.startHDLSim(toplevelName);
+//		Global.registerTCThread(this, new Client());
+//		start();
+		Global.startHDLSim(toplevelName);
 		try {
 			join();
 		} catch (InterruptedException e) {

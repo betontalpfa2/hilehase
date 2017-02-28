@@ -120,7 +120,7 @@ int __function_getter__(jmethodID* mid, const char* name, const char* decoration
  *  argc must be 2
  *  argv is the path to the java class. (/home/ebenera/hilihase/jni)
  */
-int  hilihase_init ( int argc, const char* argv ){
+int  hilihase_init ( int mode, const char* argv ){
     JavaVMOption options[nOOptions];
     JavaVMInitArgs vm_args;
     long status;
@@ -128,11 +128,11 @@ int  hilihase_init ( int argc, const char* argv ){
     calling_scope = svGetScope();
     char path[100];
     strcpy(path, "-Djava.class.path=");
-    if(argc>1){
+    // if(argc>1){
         strcat(path, argv);
-    } else {
-        strcat(path, ".");
-    }
+    // } else {
+        // strcat(path, ".");
+    // }
     strcat(path, ":./test-classes");
     
     char cwd[1024];

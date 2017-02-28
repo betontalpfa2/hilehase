@@ -112,6 +112,7 @@ public abstract class TCThread extends Thread implements IJunitHandler   {
 	public void startJUnitTest(String toplevelName) {
 		Server server = new Server(this);
 		server.startServer();
+		setParent(null);
 		
 		
 		

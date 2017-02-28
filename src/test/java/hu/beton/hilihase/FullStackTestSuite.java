@@ -1,6 +1,6 @@
 package hu.beton.hilihase;
 
-import hu.beton.hilihase.testcases.FullStackJunitTest;
+import hu.beton.hilihase.testcases.*;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -8,7 +8,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 
 @Suite.SuiteClasses({
-	FullStackJunitTest.class
+	// FullStackJunitTest.class,
+	Maximal.class
 })
 
 public class FullStackTestSuite {   

@@ -6,6 +6,8 @@ import hu.beton.hilihase.jfw.SignalEvent;
 import hu.beton.hilihase.jfw.TCThread;
 import hu.beton.hilihase.jfw.ValueE;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
 /**
  * This is the first testcase which uses the full stack of Hilehase. (including
  * questa.)
@@ -90,6 +92,11 @@ public class Maximal extends TCThread {
         
 		System.out.println("TC: FIN at " + Global.getTime());		
 
+	}
+    
+    @Test
+	public void testMe2(){
+		startJUnitTest("full_adder_tb");
 	}
 
 }

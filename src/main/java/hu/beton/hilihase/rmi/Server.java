@@ -34,6 +34,7 @@ public class Server implements IJUnitRMI, IJunitHandler {
 		try{
 //			String javaHome = System.getenv("JAVA_HOME");
 //			String rmic = javaHome + "\\bin\\rmic";
+            System.setProperty("java.rmi.server.hostname","localhost");
 			ProcessBuilder builder = new ProcessBuilder(
 					"rmiregistry", "2001", "-J-Djava.rmi.server.codebase=file:./bin/");
 			builder.redirectErrorStream(true);
@@ -61,13 +62,11 @@ public class Server implements IJUnitRMI, IJunitHandler {
 			IJUnitRMI stub = (IJUnitRMI) UnicastRemoteObject.exportObject(this, 0);
 
 			// Bind the remote object's stub in the registry
-			registry = LocateRegistry.getRegistry("127.0.0.1", 2001);
+			registry = LocateRegistry.getRegistry(2001);
 			registry.rebind("hilehase", stub);
 
 			System.err.println("Server ready");
 
-
-			Thread.sleep(10000);
 			System.err.println("Destroying...");
 
 

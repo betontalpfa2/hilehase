@@ -2,11 +2,15 @@ package hu.beton.hilihase.jfw;
 
 import hu.beton.hilihase.util.Util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Global {
 
@@ -136,7 +140,7 @@ public class Global {
 		for(TCThreadInfo tcth : tcThreadsState.values()){
 			tcth.wakeIF(on);
 		}
-	}
+        }
 
 	public static void tcThreadToSleep(long tcThreadId, int on) {
 		me._tcThreadToSleep_(tcThreadId, on);
@@ -374,7 +378,50 @@ public class Global {
 
 	public static void startHDLSim(String toplevelName) {
 		if(loadLibraries){
-			NativeInterface.startHDLSim(toplevelName);
+			List<String> cmd = new ArrayList<String>();
+			cmd.add("vsim");
+			cmd.add(toplevelName);
+			cmd.add("-batch");
+			cmd.add("-GtcName=Maximal");
+			cmd.add("-GMode=42");
+			cmd.add("-sv_lib");
+			cmd.add("nar/jfw-1.0-SNAPSHOT-amd64-Linux-gpp-shared/lib/amd64-Linux-gpp/shared/libjfw-1.0-SNAPSHOT");
+			cmd.add("-64");
+			cmd.add("-do");
+			cmd.add("run -all");
+			
+			System.out.println(cmd);
+			ProcessBuilder builder = new ProcessBuilder(cmd); 
+			builder.redirectErrorStream(true);
+			Process process = null;
+			try {
+				File f = builder.directory();
+				f = new File(f, "target");
+				builder.directory(f);
+				process = builder.start();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Started...");
+			System.out.println("Started...");
+			BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line = null;
+			while (true) {
+					try {
+						line = r.readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (line == null) { break; }
+						System.out.println(line);
+						// return;
+				}
+			// System.out.println("Started...");
+//			BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//			String line;
+//			NativeInterface.startHDLSim(toplevelName);
 		}
 		else{
 			// test

@@ -12,7 +12,7 @@ public class FullStackJunitTest extends TCThread {
 
 	@Override
 	public void test() {
-		System.out.println("Full stact Junit TEST RUNNING!!!");
+		System.out.println("Full stack Junit TEST RUNNING!!!");
 		Signal x, y, cin, cout, sum;
 		
 		x = Global.get("top_x");		
@@ -38,8 +38,13 @@ public class FullStackJunitTest extends TCThread {
 		
 	}
 	
-	@Test
+	// @Test
 	public void testMe(){
 		startHDLSim("full_adder_tb", true);
+	}
+    
+    @Test
+	public void testMe2(){
+		
 	}
 }

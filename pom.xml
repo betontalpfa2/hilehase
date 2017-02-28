@@ -17,6 +17,17 @@
   </dependencies>
   <build>
     <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <forkMode>once</forkMode>
+              <argLine>-Djava.library.path=${project.basedir}/target/nar/jfw-1.0-SNAPSHOT-amd64-Linux-gpp-shared/lib/amd64-Linux-gpp/shared/</argLine>
+              <includes>
+                <include>**/FullStackTestSuite.class</include>
+              </includes>
+            </configuration>
+        </plugin>
       <plugin>
         <groupId>com.github.maven-nar</groupId>
         <artifactId>nar-maven-plugin</artifactId>

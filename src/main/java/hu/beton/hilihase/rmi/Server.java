@@ -8,11 +8,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
-import java.util.ListIterator;
 
 
-public class Server implements IJUnitRMI {
+public class Server implements IJUnitRMI, IJunitHandler {
 	Process process = null;
 	Registry registry = null;
 //	private List<AssertionError> errors;
@@ -99,6 +97,11 @@ public class Server implements IJUnitRMI {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+	}
+
+
+	public void handleRemote(AssertionError err) throws RemoteException {
+		handle(err);
 	}
 	
 //	private void analize() {

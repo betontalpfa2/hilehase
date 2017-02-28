@@ -54,9 +54,9 @@ public class ClockTest extends TCThread {
 	}
 	
 //	@Test
-	public void testMe2(){
-		startJUnitTest();
-	}
+//	public void testMe2(){
+//		startJUnitTest(toplevelName);
+//	}
 
 
 }
